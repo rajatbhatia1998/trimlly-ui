@@ -1,0 +1,84 @@
+#container{
+    padding:25px;
+   display: flex;
+   flex-direction: column;
+    font-family: 'Roboto', sans-serif;
+    color:"#16181e";
+}
+
+#logo{
+    font-family: 'Galada', cursive;
+    color:black;
+    font-size: 40px;
+}
+
+#logo-middle{
+    font-family: 'Galada', cursive;
+    color:black;
+    font-size: 30px;
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#top-nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#middle{
+    padding: 50px;;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: center;
+}
+#middle-btn-grp{
+    float: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 20px;
+}
+
+#card-grp{
+    padding: 30px;
+    display: flex;
+   
+}
+ #stats{
+     display: flex;
+     flex-direction: row;
+     flex-wrap: wrap;
+     justify-content: space-around;
+     align-items: center;
+     padding: 20px;
+     
+ }
+#footer{
+    padding: 20px;
+    text-align: center;
+}
+
+#links{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 5px;
+}
+
+
+
+
+@media only screen and (max-width: 600px) {
+    #logo-middle{
+        display:none;
+    }
+    #card-grp{
+        display: block;
+    }
+  }
