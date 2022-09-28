@@ -6,25 +6,57 @@ import {
     Card,
     Modal,
     Statistic,
-    Spin
+    Spin,
+    Input,
+    Descriptions,
+    Typography,
+    Skeleton,
+    Popover,
+    notification
 } from 'antd';
-
-
-import {ScissorOutlined,InstagramOutlined,GithubOutlined} from '@ant-design/icons'
+import {ScissorOutlined,InstagramOutlined,GithubOutlined, BarChartOutlined} from '@ant-design/icons'
 import {Fade} from 'react-reveal'
-
 import Footer from './Footer'
 
-
+const { Search } = Input;
+const { Text, Link } = Typography;
  function Landing() {
     const [modalVisible,setModalVisible] = useState(false);
-    
- 
-    useEffect(()=>{
-       
-           
-    },[])
-
+    const [isUrlShortening,setUrlShortening] = useState(false)
+    const [currentShortn,setCurrentShorten] = useState({})
+    const [currentLongUrl,setCurrentLongUrl] = useState("")
+    const openNotificationWithIcon = (type,msg,desc) => {
+        notification[type]({
+          message: msg,
+          description:desc
+            
+        });
+      };
+    const handleUrlShortening = (url)=>{
+        setUrlShortening(true)
+        
+        //api call for shortening
+        setTimeout(()=>{
+            setUrlShortening(false)
+            //shortn data - longUrl,shortUrl,clicks,timestamp
+            
+            setCurrentShorten({
+                longUrl:currentLongUrl,
+                shortUrl:"http://localhost:3000/dashboard",
+                clicks:10,
+                timestamp:"22-09-22",
+                expiryOn:""
+            })
+            setCurrentLongUrl("")
+            openNotificationWithIcon('success','Url Shortned Success',`Your URL ${currentLongUrl} shrinked successfully. Kindly copy the short url and share it !`)
+        },4000)
+    }
+    const clickContent = (
+        <div>
+          <p>{currentShortn.clicks} Clicks</p>
+          
+        </div>
+      );
     return (
         
         <div id="container">
@@ -43,7 +75,7 @@ import Footer from './Footer'
            
                 <Fade left>
                     <div id="middle-btn-grp">
-                        <h1 style={{color:"#3959a2"}}>URL Shortner</h1>
+                        <h1 id="logo-middle" >URL Shortner</h1>
                         <p>Shorten, personalize, and share  <br/>
                         fully branded short URLs.
                         </p>
@@ -52,13 +84,40 @@ import Footer from './Footer'
                     
                     </div>
             </Fade>
+            
             <Fade right>
                     
                 <div style={{display:"flex",flexDirection:"column",flexWrap:"wrap",justifyContent:"center",alignItems:"center"}}>
-                <ScissorOutlined  spin style={{fontSize:"60px"}}/>
-                    <span id="logo-middle">
-                    Most Advanced URL Shortner
-                  </span></div>
+               
+                  <Search  value={currentLongUrl} onChange={(e)=>{setCurrentLongUrl(e.target.value)}}  onSearch={handleUrlShortening} placeholder="Enter your long url here" enterButton="Shorten" size="large" loading={isUrlShortening} />
+                  <Skeleton active title="Short Url" loading={isUrlShortening} >
+                  
+                    {(currentShortn && currentShortn.shortUrl)&&
+                    <Card style={{ width: 500,marginTop:10 }}>
+                    <div id="homeShortner">
+                    <Text style={{marginTop:5}} strong  type='secondary'>{currentShortn.longUrl}</Text>
+                    <Link style={{marginTop:10,marginBottom:10}} href={currentShortn.shortUrl} target="_blank">
+                        <Text type='danger' strong copyable italic>{currentShortn.shortUrl}</Text>
+                    </Link>
+                    <Popover  content={clickContent} title="Total Clicks">
+                 
+                        <Button size='small' icon={<BarChartOutlined />}  style={{width:100}} >Clicks</Button>
+                    </Popover>
+                    
+                    </div>
+                    </Card>
+                    }
+                   
+                </Skeleton>   
+                  </div>
+                  <div>
+            
+                  <Divider/>
+                  
+   
+                    
+                 
+              </div>
                 </Fade>
             </div>
 

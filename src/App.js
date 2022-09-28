@@ -11,7 +11,7 @@ import {
 import Dashboard from './components/Dashboard'
 import {notification,message} from 'antd'
 import Spinner from './components/common/Spinner'
-
+import ShortUrlRedirect from './components/ShortUrlRedirect';
 function App() {
   const [loading,setLoading] = useState(true)
  
@@ -20,14 +20,17 @@ function App() {
     <div className="App">
        <Router>   
         <Routes>
-          <Route path="/" exact element={<Landing/>}/>
+          <Route path="/" exact element={<Landing/>}>
+          
+          </Route>
               
-            
+          <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/:shortUrl" element={<ShortUrlRedirect />} />
         
          
-          <Route path="/dashboard" element={Dashboard}>
+          
            
-          </Route>
+        
           
         </Routes>
         </Router>
