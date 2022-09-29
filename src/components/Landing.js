@@ -134,7 +134,7 @@ const { Text, Link } = Typography;
            
                 <Fade left>
                     <div id="middle-btn-grp">
-                        <h1 id="logo-middle" >URL Shortner</h1>
+                        <span id='logo'>URL Shortner</span>
                         <p>Shorten, personalize, and share  <br/>
                         fully branded short URLs.
                         </p>
