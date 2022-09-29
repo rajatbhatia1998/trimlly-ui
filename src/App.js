@@ -25,7 +25,7 @@ function App() {
           </Route>
               
           <Route path="/dashboard" element={<Dashboard/>}/>
-          <Route path="/:shortUrl" element={<ShortUrlRedirect />} />
+          <Route path="/:slug" element={<ShortUrlRedirect />} />
         
          
           

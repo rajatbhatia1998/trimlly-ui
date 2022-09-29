@@ -17,6 +17,13 @@ import {
 import {ScissorOutlined,InstagramOutlined,GithubOutlined, BarChartOutlined} from '@ant-design/icons'
 import {Fade} from 'react-reveal'
 import Footer from './Footer'
+import URLS from '../extras/enviroment';
+import axios from 'axios'
+import { uid } from 'uid';
+
+
+
+
 
 const { Search } = Input;
 const { Text, Link } = Typography;
@@ -34,22 +41,27 @@ const { Text, Link } = Typography;
       };
     const handleUrlShortening = (url)=>{
         setUrlShortening(true)
-        
+        const CREATE_BODY = {
+            "userType":"GUEST",
+            "userId":uid(),
+            "longUrl":currentLongUrl
+          }
         //api call for shortening
-        setTimeout(()=>{
+        axios.post(URLS.GUEST_URL.CREATE_SHORTN,CREATE_BODY).then(res=>{
+            console.log("RES",res)
+            if(res.status===200 && res.data.status===true){
+
+          
             setUrlShortening(false)
-            //shortn data - longUrl,shortUrl,clicks,timestamp
-            
-            setCurrentShorten({
-                longUrl:currentLongUrl,
-                shortUrl:"http://localhost:3000/dashboard",
-                clicks:10,
-                timestamp:"22-09-22",
-                expiryOn:""
-            })
+            setCurrentShorten(res.data.data)
             setCurrentLongUrl("")
             openNotificationWithIcon('success','Url Shortned Success',`Your URL ${currentLongUrl} shrinked successfully. Kindly copy the short url and share it !`)
-        },4000)
+
+            }else{
+                openNotificationWithIcon('failure','Failure','Not able to generate shortn url ! Please w=try again')
+            }
+        })
+       
     }
     const clickContent = (
         <div>
