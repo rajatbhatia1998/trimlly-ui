@@ -39,11 +39,25 @@ const { Text, Link } = Typography;
             
         });
       };
+    const getGuestId = ()=>{
+        const guestId = localStorage.getItem('trimlly-guestId')
+        console.log(guestId)
+        if(guestId){
+            return guestId
+        }else{
+            let newGuestId = uid();
+            localStorage.setItem('trimlly-guestId',newGuestId)
+            return newGuestId
+        }
+       
+
+
+    }
     const handleUrlShortening = (url)=>{
         setUrlShortening(true)
         const CREATE_BODY = {
             "userType":"GUEST",
-            "userId":uid(),
+            "userId":getGuestId(),
             "longUrl":currentLongUrl
           }
         //api call for shortening
