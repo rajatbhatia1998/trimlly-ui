@@ -50,7 +50,15 @@ const { Text, Link } = Typography;
 
     },[])
 
+   const getRedirectUrl = (longUrl)=>{
+        let url = longUrl
+        var pattern = /^((http|https):\/\/)/;
 
+      if(!pattern.test(url)) {
+          url = "http://" + url;
+      }
+       return url
+    }
     const openNotificationWithIcon = (type,msg,desc) => {
         notification[type]({
           message: msg,
@@ -155,7 +163,7 @@ const { Text, Link } = Typography;
                     <Card style={{marginTop:10 }}>
                     <div id="homeShortner">
                     <Text style={{marginTop:5}} strong  type='secondary'>{currentShortn.longUrl}</Text>
-                    <Link style={{marginTop:10,marginBottom:10}} href={currentShortn.shortUrl} target="_blank">
+                    <Link style={{marginTop:10,marginBottom:10}} href={getRedirectUrl(currentShortn.shortUrl)} target="_blank">
                         <Text type='danger' strong copyable italic>{currentShortn.shortUrl}</Text>
                     </Link>
                     <Popover  content={clickContent} title="Total Clicks">
