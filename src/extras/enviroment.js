@@ -1,0 +1,1 @@
+const server_url = "https://trimlly-server.herokuapp.com/"

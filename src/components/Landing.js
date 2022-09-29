@@ -93,7 +93,7 @@ const { Text, Link } = Typography;
                   <Skeleton active title="Short Url" loading={isUrlShortening} >
                   
                     {(currentShortn && currentShortn.shortUrl)&&
-                    <Card style={{ width: 500,marginTop:10 }}>
+                    <Card style={{marginTop:10 }}>
                     <div id="homeShortner">
                     <Text style={{marginTop:5}} strong  type='secondary'>{currentShortn.longUrl}</Text>
                     <Link style={{marginTop:10,marginBottom:10}} href={currentShortn.shortUrl} target="_blank">
