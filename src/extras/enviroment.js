@@ -5,7 +5,8 @@ const URLS = {
 
     GUEST_URL:{
         CREATE_SHORTN:server_url+'/url/create',
-        GET_SLUG_DETAILS:server_url+'/url/redirect/'
+        GET_SLUG_DETAILS:server_url+'/url/redirect/',
+        GET_CURRENT_URL:server_url+'/url/guest/'
     }
 
 }

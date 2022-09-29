@@ -27,11 +27,30 @@ import { uid } from 'uid';
 
 const { Search } = Input;
 const { Text, Link } = Typography;
+
+
+
+
  function Landing() {
     const [modalVisible,setModalVisible] = useState(false);
     const [isUrlShortening,setUrlShortening] = useState(false)
     const [currentShortn,setCurrentShorten] = useState({})
     const [currentLongUrl,setCurrentLongUrl] = useState("")
+
+
+    useEffect(()=>{
+      
+      axios.get(URLS.GUEST_URL.GET_CURRENT_URL+getGuestId()).then(res=>{
+           
+            if(res.status===200 && res.data.status){
+                setCurrentShorten(res.data.data)
+               
+            }
+        })
+
+    },[])
+
+
     const openNotificationWithIcon = (type,msg,desc) => {
         notification[type]({
           message: msg,
@@ -50,10 +69,18 @@ const { Text, Link } = Typography;
             return newGuestId
         }
        
-
-
     }
+    function validURL(str) {
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+          '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return !!pattern.test(str);
+      }
     const handleUrlShortening = (url)=>{
+        if(validURL(currentLongUrl)){
         setUrlShortening(true)
         const CREATE_BODY = {
             "userType":"GUEST",
@@ -64,18 +91,22 @@ const { Text, Link } = Typography;
         axios.post(URLS.GUEST_URL.CREATE_SHORTN,CREATE_BODY).then(res=>{
             console.log("RES",res)
             if(res.status===200 && res.data.status===true){
-
-          
             setUrlShortening(false)
             setCurrentShorten(res.data.data)
             setCurrentLongUrl("")
             openNotificationWithIcon('success','Url Shortned Success',`Your URL ${currentLongUrl} shrinked successfully. Kindly copy the short url and share it !`)
 
             }else{
-                openNotificationWithIcon('failure','Failure','Not able to generate shortn url ! Please w=try again')
+                setCurrentLongUrl("")
+                setCurrentShorten({})
+                openNotificationWithIcon('error','Failure','Not able to generate shortn url ! Please try again')
             }
         })
-       
+        }else{
+            setCurrentLongUrl("")
+            setCurrentShorten({})
+            openNotificationWithIcon('error','Invalid URL','Please give valid url for shortening!')
+        }
     }
     const clickContent = (
         <div>
@@ -83,6 +114,8 @@ const { Text, Link } = Typography;
           
         </div>
       );
+
+
     return (
         
         <div id="container">
@@ -115,7 +148,7 @@ const { Text, Link } = Typography;
                     
                 <div style={{display:"flex",flexDirection:"column",flexWrap:"wrap",justifyContent:"center",alignItems:"center"}}>
                
-                  <Search  value={currentLongUrl} onChange={(e)=>{setCurrentLongUrl(e.target.value)}}  onSearch={handleUrlShortening} placeholder="Enter your long url here" enterButton="Shorten" size="large" loading={isUrlShortening} />
+                  <Search  style={{marginBottom:10}}  value={currentLongUrl} onChange={(e)=>{setCurrentLongUrl(e.target.value)}}  onSearch={handleUrlShortening} placeholder="Enter your long url here" enterButton="Shorten" size="large" loading={isUrlShortening} />
                   <Skeleton active title="Short Url" loading={isUrlShortening} >
                   
                     {(currentShortn && currentShortn.shortUrl)&&
