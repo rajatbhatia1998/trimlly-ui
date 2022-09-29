@@ -129,7 +129,7 @@ const { Text, Link } = Typography;
         <div id="container">
         <Fade>
             <nav id="top-nav">
-                 <span id="logo">Trimlly</span> 
+                 <img width={100} height={100} src='./trimllyLogo.png'/>
                  <div id="links">
                     <InstagramOutlined  style={{fontSize:"30px"}}/>
                     <GithubOutlined  style={{fontSize:"30px",marginLeft:"5px"}}/>
