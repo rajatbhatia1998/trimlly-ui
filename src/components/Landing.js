@@ -59,6 +59,7 @@ const { Text, Link } = Typography;
             // The signed-in user info.
             const user = result.user;
             console.log("user login",user)
+            navigate('/dashboard')
             // ...
           }).catch((error) => {
             // Handle Errors here.
