@@ -12,15 +12,18 @@ import {
     Typography,
     Skeleton,
     Popover,
-    notification
+    notification,
+    Form,
+    Switch
 } from 'antd';
 import {ScissorOutlined,InstagramOutlined,GithubOutlined, BarChartOutlined} from '@ant-design/icons'
+import { getAuth, signInWithPopup, GoogleAuthProvider,EmailAuthProvider,createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
 import {Fade} from 'react-reveal'
 import Footer from './Footer'
 import URLS from '../extras/enviroment';
 import axios from 'axios'
 import { uid } from 'uid';
-
+import { useNavigate} from 'react-router-dom';
 
 
 
@@ -32,19 +35,49 @@ const { Text, Link } = Typography;
 
 
  function Landing() {
+    const navigate = useNavigate();
     const [modalVisible,setModalVisible] = useState(false);
     const [isUrlShortening,setUrlShortening] = useState(false)
     const [currentShortn,setCurrentShorten] = useState({})
     const [currentLongUrl,setCurrentLongUrl] = useState("")
+    const [loginUsername,setLoginUserName] = useState("")
+    const [loginPassword,setLoginPassword] = useState("")
+    const [singUpUsername,setsingUpUserName] = useState("")
+    const [singUpPassword,setsingUpPassword] = useState("")
+    const [loginMode,setLoginMode] = useState('LOGIN')
+    const [loginProgress,setLoginProgress]  = useState(false)
 
+   
 
+    const handleGoogleLogin = ()=>{
+        const auth = getAuth();
+        signInWithPopup(auth, new GoogleAuthProvider())
+          .then((result) => {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            // The signed-in user info.
+            const user = result.user;
+            console.log("user login",user)
+            // ...
+          }).catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            // ...
+          });
+    }
+   
     useEffect(()=>{
       
       axios.get(URLS.GUEST_URL.GET_CURRENT_URL+getGuestId()).then(res=>{
            
             if(res.status===200 && res.data.status){
                 setCurrentShorten(res.data.data)
-               
             }
         })
 
@@ -59,7 +92,7 @@ const { Text, Link } = Typography;
       }
        return url
     }
-    const openNotificationWithIcon = (type,msg,desc) => {
+    var openNotificationWithIcon = (type,msg,desc) => {
         notification[type]({
           message: msg,
           description:desc
@@ -123,10 +156,142 @@ const { Text, Link } = Typography;
         </div>
       );
 
-
+      const handleUserNameChange = (e)=>{
+        //console.log("usrrname changed",loginMode,e.target.value)
+        if(loginMode==='LOGIN'){
+            setLoginUserName(e.target.value)
+        }else{
+            setsingUpUserName(e.target.value)
+        }
+        
+      }
+      const handlePasswordChange = (e)=>{
+        //console.log("passowrd changed",loginMode,e.target.value)
+        if(loginMode==='LOGIN'){
+            setLoginPassword(e.target.value)
+        }else{
+            setsingUpPassword(e.target.value)
+        }
+        
+      }
+      const handleSingUp = ()=>{
+        setLoginProgress(true)
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, singUpUsername, singUpPassword)
+          .then((userCredential) => {
+            // Signed in 
+            setLoginProgress(false)
+            const user = userCredential.user;
+            console.log('singin sucess',user)
+            openNotificationWithIcon('success','Signup Success','Account created successfully')
+            navigate('/dashboard')
+            if(!user.emailVerified){
+                user.sendEmailVerification()
+                openNotificationWithIcon('info','Email Verification','Verification mail sent to your registered email!')
+            }
+            // ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setLoginProgress(false)
+            openNotificationWithIcon('error','Signup Error',errorMessage)
+           // console.log('ssinguin error',error)
+            // ..
+          });
+      }
+      const handleLogin = ()=>{
+        setLoginProgress(true)
+        const auth = getAuth();
+            signInWithEmailAndPassword(auth, loginUsername, loginPassword)
+            .then((userCredential) => {
+                // Signed in 
+                setLoginProgress(false)
+                const user = userCredential.user;
+                console.log('logun sucess',user)
+                openNotificationWithIcon('success','Login Success','Logged in successfully!')
+                navigate('/dashboard')
+                if(!user.emailVerified){
+                    openNotificationWithIcon('info','Email Verification','Your Email verification is pending , Kindly verify !')
+                }
+                // ...
+            })
+            .catch((error) => {
+                console.log(error)
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                setLoginProgress(false)
+            openNotificationWithIcon('error','Login Error',errorMessage)
+            });
+      }
     return (
         
         <div id="container">
+            
+             <Modal title= {loginMode==='LOGIN'?'LOGIN':'SIGNUP'} open={modalVisible} onOk={()=>setModalVisible(false)}  onCancel={()=>setModalVisible(false)}>
+             <Spin tip="Please Wait!" spinning={loginProgress}>
+                <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                            <Form
+                name="basic"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                autoComplete="off"
+                >
+                <Form.Item
+            
+                    label="Email Id"
+                    name="email"
+                    rules={[{ required: true, message: 'Please input your email!' }]}
+                >
+                    <Input  value={loginMode==='LOGIN'?loginUsername:singUpUsername} onChange={handleUserNameChange} />
+                </Form.Item>
+
+                <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                    <Input.Password value={loginMode==='LOGIN'?loginPassword:singUpPassword} onChange={handlePasswordChange} />
+                </Form.Item>
+
+                {/* <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
+                    <Checkbox>Remember me</Checkbox>
+                </Form.Item> */}
+                    <Form.Item label="SINGUP ?" valuePropName="checked">
+                    <Switch onChange={(e)=>{
+                        console.log("switch toggle",e)
+                        if(e){
+                            setLoginMode('SINGUP')
+                            setsingUpUserName(loginUsername)
+                            setsingUpPassword(loginPassword)
+                           
+
+                        }else{
+                            setLoginMode('LOGIN')
+                            setLoginPassword(singUpPassword)
+                            setLoginUserName(singUpUsername)
+                          
+                        }
+                    }}  />
+                    </Form.Item>
+
+
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                    <Button type="primary" htmlType="submit"
+                    onClick= {()=>{loginMode==='LOGIN'?handleLogin():handleSingUp()}}
+                    >
+                    {loginMode==='LOGIN'?'LOGIN':'SIGNUP'}
+                    </Button>
+                </Form.Item>
+
+                </Form>
+                <div onClick={()=>{handleGoogleLogin()}} > <a class="btn btn-lg btn-google btn-block text-uppercase btn-outline" href="#"><img src="https://img.icons8.com/color/16/000000/google-logo.png"/> Login Using Google</a> </div><br/>
+                                
+                            
+                </div>
+            </Spin> 
+      </Modal>
+    
         <Fade>
             <nav id="top-nav">
                  <img width={100} height={100} src='./trimllyLogo.png'/>
@@ -148,6 +313,8 @@ const { Text, Link } = Typography;
                         </p>
                         <Button type="primary" shape="round"
                          onClick={()=>setModalVisible(true)}>START FOR FREE</Button>
+
+                         
                     
                     </div>
             </Fade>
