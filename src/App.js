@@ -7,7 +7,8 @@ import {
   redirect,
   useNavigate
  } from "react-router-dom";
- import {useSelector,useDispatch} from 'react-redux'
+ import {useSelector,useDispatch,Provider} from 'react-redux'
+ import store from './redux/store';
  import Landing from './components/Landing'
 import Dashboard from './components/Dashboard'
 import {notification,message} from 'antd'
@@ -15,26 +16,24 @@ import Spinner from './components/common/Spinner'
 import ShortUrlRedirect from './components/ShortUrlRedirect';
 import app from './extras/firebase'
 import { getAuth}from 'firebase/auth'
+
 function App() {
   const [loading,setLoading] = useState(true)
-  const [isLoggedIn,setisLoggedIn] = useState(false)
 
-  useEffect(()=>{
-  
-    getAuth().onAuthStateChanged(function(user) {
-      console.log('auth state changed',user)
-      if (user) {
-        // User is signed in.
-        setisLoggedIn(true)
-       window.history.pushState({},undefined,'/dashboard')
-        // ...
-      } else {
-        window.history.pushState({},undefined,'/')
-      }
+
+  var openNotificationWithIcon = (type,msg,desc) => {
+    notification[type]({
+      message: msg,
+      description:desc
+        
     });
-  },[])
+  };
+
+ 
+  
  
   return (
+    <Provider store={store}>
     <div className="App">
    
        <Router>   
@@ -55,6 +54,7 @@ function App() {
         </Router>
       
     </div>
+    </Provider>
   );
 }
 

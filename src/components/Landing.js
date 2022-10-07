@@ -25,9 +25,9 @@ import axios from 'axios'
 import { uid } from 'uid';
 import { useNavigate} from 'react-router-dom';
 
-
-
-
+import {useSelector,useDispatch} from 'react-redux'
+import {USER_LOGIN_SUCCESS} from '../redux/action/actionTypes'
+import {getRedirectUrl} from '../extras/commanScript'
 const { Search } = Input;
 const { Text, Link } = Typography;
 
@@ -36,6 +36,7 @@ const { Text, Link } = Typography;
 
  function Landing() {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const [modalVisible,setModalVisible] = useState(false);
     const [isUrlShortening,setUrlShortening] = useState(false)
     const [currentShortn,setCurrentShorten] = useState({})
@@ -46,9 +47,28 @@ const { Text, Link } = Typography;
     const [singUpPassword,setsingUpPassword] = useState("")
     const [loginMode,setLoginMode] = useState('LOGIN')
     const [loginProgress,setLoginProgress]  = useState(false)
-
-   
-
+    
+    
+    useEffect(()=>{
+        getAuth().onAuthStateChanged(function(user) {
+            console.log('auth state changed',user)
+            if (user) {
+              // User is signed in.
+              openNotificationWithIcon('success','Login Success','Logged in successfully!')
+            
+              dispatch({type:USER_LOGIN_SUCCESS,payload:{isLoggedIn:true,
+                oauthDetails:user,
+                userConfig:{membership:{plan:'TIER 1',planExpiry:'22/10/2023',planStarted:'22/10/2022'}}
+            }})
+            navigate('/dashboard')
+              // ...
+            } else {
+              navigate('/')
+            }
+          });
+       
+      },[])
+     
     const handleGoogleLogin = ()=>{
         const auth = getAuth();
         signInWithPopup(auth, new GoogleAuthProvider())
@@ -56,11 +76,9 @@ const { Text, Link } = Typography;
             // This gives you a Google Access Token. You can use it to access the Google API.
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential.accessToken;
-            // The signed-in user info.
             const user = result.user;
-            console.log("user login",user)
-            navigate('/dashboard')
-            // ...
+            
+           
           }).catch((error) => {
             // Handle Errors here.
             const errorCode = error.code;
@@ -84,15 +102,7 @@ const { Text, Link } = Typography;
 
     },[])
 
-   const getRedirectUrl = (longUrl)=>{
-        let url = longUrl
-        var pattern = /^((http|https):\/\/)/;
-
-      if(!pattern.test(url)) {
-          url = "http://" + url;
-      }
-       return url
-    }
+   
     var openNotificationWithIcon = (type,msg,desc) => {
         notification[type]({
           message: msg,
@@ -286,7 +296,7 @@ const { Text, Link } = Typography;
                 </Form.Item>
 
                 </Form>
-                <div onClick={()=>{handleGoogleLogin()}} > <a class="btn btn-lg btn-google btn-block text-uppercase btn-outline" href="#"><img src="https://img.icons8.com/color/16/000000/google-logo.png"/> Login Using Google</a> </div><br/>
+                 <a  onClick={()=>{handleGoogleLogin()}} className="flex flex-row border-2 p-2 rounded-sm" href="#"><img src="https://img.icons8.com/color/16/000000/google-logo.png" style={{marginRight:10}}/> Login Using Google</a> <br/>
                                 
                             
                 </div>
@@ -294,13 +304,30 @@ const { Text, Link } = Typography;
       </Modal>
     
         <Fade>
-            <nav id="top-nav">
+            {/* <nav id="top-nav">
                  <img width={100} height={100} src='./trimllyLogo.png'/>
                  <div id="links">
                     <InstagramOutlined  style={{fontSize:"30px"}}/>
                     <GithubOutlined  style={{fontSize:"30px",marginLeft:"5px"}}/>
                  </div>
-            </nav>
+            </nav> */}
+            
+
+            <nav class="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-900 fixed w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600">
+  <div class="container flex flex-wrap justify-between items-center mx-auto">
+  <a href="https://flowbite.com/" class="flex items-center">
+      <img src='./trimllyLogo.png'  class="mr-3 h-10 sm:h-20" alt="Trimlly Logo"/>
+      {/* <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Trimlly</span> */}
+  </a>
+  <div class="flex md:order-2">
+      <button onClick={()=>setModalVisible(true)} type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Get started</button>
+      
+  </div>
+  
+  </div>
+</nav>
+
+
         </Fade>
             <Divider/>
             <div id="middle">
@@ -312,8 +339,8 @@ const { Text, Link } = Typography;
                         <p>Shorten, personalize, and share  <br/>
                         fully branded short URLs.
                         </p>
-                        <Button type="primary" shape="round"
-                         onClick={()=>setModalVisible(true)}>START FOR FREE</Button>
+                        {/* <Button type="primary" shape="round"
+                         onClick={()=>setModalVisible(true)}>START FOR FREE</Button> */}
 
                          
                     
