@@ -12,7 +12,9 @@ import DashboardDefault from './Default/DashboardDefault';
 import Navbar from '../Navbar';
 import Analytics from './Analytics';
 import CreateUrl from './Default/CreateUrl';
-
+import axios from 'axios';
+import URLS from '../../extras/enviroment';
+import {USER_LOGIN_SUCCESS,SET_MEMBERSHIP_CONFIG} from '../../redux/action/actionTypes'
 
 export default function Dashboard() {
 
@@ -29,13 +31,19 @@ export default function Dashboard() {
         console.log('auth state check',user)
     if (user) {
         const uid = user.uid;
-        openNotificationWithIcon('success','Login Success','Logged in successfully!')
-        
-        dispatch({type:'USER_LOGIN_SUCCESS',payload:{isLoggedIn:true,
-        oauthDetails:user,
-        userConfig:{membership:{plan:'TIER 1',planExpiry:'22/10/2023',planStarted:'22/10/2022'}}
-        }})
-        navigate('/dashboard/default')
+        axios.get(URLS.CUSTOMER.GET_MEMVERSHIP_CONFIG+user.email).then(res=>{
+          console.log('memebership configs',res.data)
+          if(res.data.status){
+            dispatch({type:SET_MEMBERSHIP_CONFIG,payload:{...res.data.data}})
+          }
+          
+          dispatch({type:USER_LOGIN_SUCCESS,payload:{isLoggedIn:true,
+            oauthDetails:user,
+            userConfig:{}
+            }})
+            navigate('/dashboard/default')
+        })
+       
     
     } else {
         navigate('/')

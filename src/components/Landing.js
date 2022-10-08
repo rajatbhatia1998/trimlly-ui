@@ -17,7 +17,7 @@ import {
     Switch
 } from 'antd';
 import {ScissorOutlined,InstagramOutlined,GithubOutlined, BarChartOutlined} from '@ant-design/icons'
-import { AdditionalUserInfo,onAuthStateChanged,getAuth, signInWithPopup, GoogleAuthProvider,signInWithRedirect,createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
+import { sendEmailVerification,AdditionalUserInfo,onAuthStateChanged,getAuth, signInWithPopup, GoogleAuthProvider,signInWithRedirect,createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
 import {Fade} from 'react-reveal'
 import Footer from './Footer'
 import URLS from '../extras/enviroment';
@@ -56,11 +56,11 @@ const { Text, Link } = Typography;
             console.log('auth state check',user)
         if (user) {
             const uid = user.uid;
-            openNotificationWithIcon('success','Login Success','Logged in successfully!')
+            
             
             dispatch({type:USER_LOGIN_SUCCESS,payload:{isLoggedIn:true,
             oauthDetails:user,
-            userConfig:{membershipInfo:{plan:'TIER 1',planExpiry:'22/10/2023',planStarted:'22/10/2022'}}
+            userConfig:{}
             }})
             navigate('/dashboard/default')
         
@@ -80,8 +80,8 @@ const { Text, Link } = Typography;
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential.accessToken;
             const user = result.user;
-            console.log('google signin check',user,result)
-           
+           // console.log('google signin check',user,user.AdditionalUserInfo)
+            openNotificationWithIcon('success','Login Success','Logged in successfully!')
           }).catch((error) => {
             // Handle Errors here.
             const errorCode = error.code;
@@ -196,11 +196,11 @@ const { Text, Link } = Typography;
             // Signed in 
             setLoginProgress(false)
             const user = userCredential.user;
-            console.log('singin sucess',user)
+         
             openNotificationWithIcon('success','Signup Success','Account created successfully')
-            navigate('/dashboard')
+          
             if(!user.emailVerified){
-                user.sendEmailVerification()
+              sendEmailVerification(user)
                 openNotificationWithIcon('info','Email Verification','Verification mail sent to your registered email!')
             }
             // ...
@@ -224,7 +224,7 @@ const { Text, Link } = Typography;
                 const user = userCredential.user;
                 console.log('logun sucess',user)
                 openNotificationWithIcon('success','Login Success','Logged in successfully!')
-                navigate('/dashboard')
+               
                 if(!user.emailVerified){
                     openNotificationWithIcon('info','Email Verification','Your Email verification is pending , Kindly verify !')
                 }

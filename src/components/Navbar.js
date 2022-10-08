@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react'
-import {BellFilled
+import {BellFilled,CrownTwoTone
 } from '@ant-design/icons';
 import { Button, Menu,notification,Avatar,Radio, Space, Table, Tag } from 'antd';
 import {
@@ -19,6 +19,7 @@ export default function Navbar() {
   const [showDrawer,setShowDrower] = useState(true)
   const [currentMenu,setCurrentMenu] = useState('DASHBOARD')
   const user = useSelector(state=>state.login.oauthDetails)
+  const configs = useSelector(state=>state.configs)
   const location = useLocation();
   var openNotificationWithIcon = (type,msg,desc) => {
     notification[type]({
@@ -28,7 +29,7 @@ export default function Navbar() {
     });
   };
   useEffect(()=>{
-    console.log('refux state changed for login',user)
+    // console.log('refux state changed for navbar',user)
   },[user])
   useEffect(()=>{
     console.log('route changed',location)
@@ -83,8 +84,12 @@ export default function Navbar() {
             <a  class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                <span class="flex-1 ml-3 whitespace-nowrap">Dashboard</span>
-               <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
-            </a>
+              {configs.membership.planType!=='FREE' &&  <CrownTwoTone style={{marginLeft:5}} twoToneColor='#FFD700'/>}
+               {configs.membership.planType==='FREE' &&    <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">FREE</span> }
+         
+               {configs.membership.planType==='PERSONAL' &&    <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">PERSONAL</span> }  </a>
+               
+               {configs.membership.planType==='PRO' &&    <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">PRO</span> }
          </li>
          <li>
             <button type="button" class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">

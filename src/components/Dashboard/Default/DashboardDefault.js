@@ -5,7 +5,7 @@ import {AppstoreOutlined,
     FilterOutlined,
     ReloadOutlined
     } from '@ant-design/icons';
-import { Button, Empty,notification,Avatar,Radio, Space, Table, Tag ,Spin,Typography} from 'antd';
+import { Result,Button, Empty,notification,Avatar,Radio, Space, Table, Tag ,Spin,Typography} from 'antd';
   import {
   BrowserRouter as Router,
   Routes,
@@ -38,7 +38,7 @@ export default function DashboardDefault() {
       });
     };
     useEffect(()=>{
-      console.log('default user redux hook',user)
+    
       if(user.email ){
         fetchCustomerUrls()
       }
@@ -51,7 +51,7 @@ export default function DashboardDefault() {
       axios.get(URLS.CUSTOMER.GET_USER_URLS+user.email).then((res)=>{
         console.log('url res',res)
         setIsFetching(false)
-      
+     
         if(res.data.status){
           if(res.data.data.length>0){
             setUrlData(res.data.data)
@@ -66,6 +66,8 @@ export default function DashboardDefault() {
       })
     }
   return (
+  <>
+    {user.emailVerified  ?
     <div className="">
         {isFetching ? 
             <div className="flex justify-center align-middle p-10 m-10">
@@ -164,5 +166,18 @@ export default function DashboardDefault() {
         
         
         </div>
+        :
+        <div>
+          {isFetching===false &&    <Result
+        status="403"
+        title="Not verified"
+        subTitle="Please Verify your email now to start using app !"
+        extra={<Button type="primary">Back Home</Button>}
+      />}
+        </div>
+     
+}
+
+        </>
   )
 }

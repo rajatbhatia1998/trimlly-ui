@@ -1,12 +1,14 @@
 import {combineReducers} from 'redux'
 import loginReducer from './loginReducer'
+import membershipConfig from './membershipReducer'
 
 
 
 
 
 const rootReducer = combineReducers({
-    login:loginReducer
+    login:loginReducer,
+    configs:membershipConfig,
 })
 
 
