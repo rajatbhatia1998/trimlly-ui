@@ -9,13 +9,17 @@ import {
  } from "react-router-dom";
  import {useSelector,useDispatch,Provider} from 'react-redux'
  import store from './redux/store';
- import Landing from './components/Landing'
-import Dashboard from './components/Dashboard'
+
 import {notification,message} from 'antd'
 import Spinner from './components/common/Spinner'
 import ShortUrlRedirect from './components/ShortUrlRedirect';
 import app from './extras/firebase'
 import { getAuth}from 'firebase/auth'
+import Landing from './components/Landing'
+import Dashboard from './components/Dashboard/Dashboard'
+import DashboardDefault from './components/Dashboard/Default/DashboardDefault';
+import Analytics from './components/Dashboard/Analytics';
+import CreateUrl from './components/Dashboard/Default/CreateUrl';
 
 function App() {
   const [loading,setLoading] = useState(true)
@@ -38,11 +42,17 @@ function App() {
    
        <Router>   
         <Routes>
-          <Route path="/" exact element={<Landing/>}>
+          <Route path="/" exact element={<Landing/>}/>
           
-          </Route>
+          
               
-          <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/dashboard" element={<Dashboard/>}>
+               <Route path='default' element={<DashboardDefault />} >
+               <Route path='create' element={<CreateUrl />} />
+               <Route path='edit' element={<Analytics />} />
+                </Route>
+               <Route path='analytics' element={<Analytics />} />
+          </Route>
           <Route path="/:slug" element={<ShortUrlRedirect />} />
         
          

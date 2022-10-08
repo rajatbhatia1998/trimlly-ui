@@ -17,7 +17,7 @@ import {
     Switch
 } from 'antd';
 import {ScissorOutlined,InstagramOutlined,GithubOutlined, BarChartOutlined} from '@ant-design/icons'
-import { getAuth, signInWithPopup, GoogleAuthProvider,EmailAuthProvider,createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged,getAuth, signInWithPopup, GoogleAuthProvider,EmailAuthProvider,createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
 import {Fade} from 'react-reveal'
 import Footer from './Footer'
 import URLS from '../extras/enviroment';
@@ -50,22 +50,24 @@ const { Text, Link } = Typography;
     
     
     useEffect(()=>{
-        getAuth().onAuthStateChanged(function(user) {
-            console.log('auth state changed',user)
-            if (user) {
-              // User is signed in.
-              openNotificationWithIcon('success','Login Success','Logged in successfully!')
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            console.log('auth state check',user)
+        if (user) {
+            const uid = user.uid;
+            openNotificationWithIcon('success','Login Success','Logged in successfully!')
             
-              dispatch({type:USER_LOGIN_SUCCESS,payload:{isLoggedIn:true,
-                oauthDetails:user,
-                userConfig:{membership:{plan:'TIER 1',planExpiry:'22/10/2023',planStarted:'22/10/2022'}}
-            }})
-            navigate('/dashboard')
-              // ...
-            } else {
-              navigate('/')
-            }
-          });
+            dispatch({type:USER_LOGIN_SUCCESS,payload:{isLoggedIn:true,
+            oauthDetails:user,
+            userConfig:{membership:{plan:'TIER 1',planExpiry:'22/10/2023',planStarted:'22/10/2022'}}
+        }})
+        navigate('/dashboard/default')
+        
+        } else {
+            navigate('/')
+        }
+        });
+       
        
       },[])
      
@@ -407,14 +409,86 @@ const { Text, Link } = Typography;
             </div>
             </Fade>
            <Divider/>
-           <div id="stats">
-               
-                    <Statistic title="Customers" value={11289} />
-                    <Statistic title="Total Shortened URLs" value={125984444}/>
-                    
-                
+          
+           
+<div id="detailed-pricing" class="overflow-x-auto w-full">
+    <div class="overflow-hidden min-w-max">
+        <div class="grid grid-cols-4 gap-x-16 p-4 text-sm font-medium text-gray-900 bg-gray-100 border-t border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+            <div class="flex items-center">Trimlly Features</div>
+            <div>Free</div>
+            <div>Personal</div>
+            <div>Pro</div>
+        </div>
+        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+            <div class="text-gray-500 dark:text-gray-400">Unlimited URLs</div>
+            <div>
+                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </div>
-           <Divider/>
+            <div>
+                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            </div>
+            <div>
+                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+            <div class="text-gray-500 dark:text-gray-400">Application UI </div>
+            <div>
+                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </div>
+            <div>
+                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            </div>
+            <div>
+                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+            <div class="text-gray-500 dark:text-gray-400">Marketing UI pre-order</div>
+            <div>
+                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </div>
+            <div>
+                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            </div>
+            <div>
+                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+            <div class="text-gray-500 dark:text-gray-400">E-commerce UI pre-order</div>
+            <div>
+                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </div>
+            <div>
+                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            </div>
+            <div>
+                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+            <div class="text-gray-500 dark:text-gray-400"></div>
+            <div>
+                <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Get Started</a>
+            </div>
+            <div>
+                <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
+            </div>
+            <div>
+                <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="stats">
+               
+               <Statistic title="Customers" value={11289} />
+               <Statistic title="Total Shortened URLs" value={125984444}/>
+               
+           
+       </div>
+      <Divider/>
           <Footer/>
 
            {/* <Modal
