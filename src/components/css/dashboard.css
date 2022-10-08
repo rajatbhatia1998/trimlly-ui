@@ -1,0 +1,19 @@
+.dashboard-table{
+    display: flex;
+}
+
+
+
+
+.drawerBGTransaparent{
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.5);
+    position: absolute;
+    z-index: 10;
+}
+@media only screen and (max-width: 600px) {
+    .ant-table-wrapper{
+
+    }
+  }
