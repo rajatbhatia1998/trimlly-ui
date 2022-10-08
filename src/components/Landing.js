@@ -17,7 +17,7 @@ import {
     Switch
 } from 'antd';
 import {ScissorOutlined,InstagramOutlined,GithubOutlined, BarChartOutlined} from '@ant-design/icons'
-import { onAuthStateChanged,getAuth, signInWithPopup, GoogleAuthProvider,EmailAuthProvider,createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
+import { AdditionalUserInfo,onAuthStateChanged,getAuth, signInWithPopup, GoogleAuthProvider,signInWithRedirect,createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
 import {Fade} from 'react-reveal'
 import Footer from './Footer'
 import URLS from '../extras/enviroment';
@@ -28,6 +28,7 @@ import { useNavigate} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux'
 import {USER_LOGIN_SUCCESS} from '../redux/action/actionTypes'
 import {getRedirectUrl} from '../extras/commanScript'
+import {ReactComponent as LandingIllu} from './common/landingIllu.svg'
 const { Search } = Input;
 const { Text, Link } = Typography;
 
@@ -59,9 +60,9 @@ const { Text, Link } = Typography;
             
             dispatch({type:USER_LOGIN_SUCCESS,payload:{isLoggedIn:true,
             oauthDetails:user,
-            userConfig:{membership:{plan:'TIER 1',planExpiry:'22/10/2023',planStarted:'22/10/2022'}}
-        }})
-        navigate('/dashboard/default')
+            userConfig:{membershipInfo:{plan:'TIER 1',planExpiry:'22/10/2023',planStarted:'22/10/2022'}}
+            }})
+            navigate('/dashboard/default')
         
         } else {
             navigate('/')
@@ -69,7 +70,7 @@ const { Text, Link } = Typography;
         });
        
        
-      },[])
+    },[])
      
     const handleGoogleLogin = ()=>{
         const auth = getAuth();
@@ -79,7 +80,7 @@ const { Text, Link } = Typography;
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential.accessToken;
             const user = result.user;
-            
+            console.log('google signin check',user,result)
            
           }).catch((error) => {
             // Handle Errors here.
@@ -318,7 +319,7 @@ const { Text, Link } = Typography;
             <nav class="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-900 fixed w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600">
   <div class="container flex flex-wrap justify-between items-center mx-auto">
   <a href="https://flowbite.com/" class="flex items-center">
-      <img src='./trimllyLogo.png'  class="mr-3 h-10 sm:h-20" alt="Trimlly Logo"/>
+      <img src='./trimllyLogo.png'  class="mr-3 h-20 sm:h-20" alt="Trimlly Logo"/>
       {/* <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Trimlly</span> */}
   </a>
   <div class="flex md:order-2">
@@ -337,10 +338,11 @@ const { Text, Link } = Typography;
            
                 <Fade left>
                     <div id="middle-btn-grp">
-                        <span id='logo'>URL Shortner</span>
+                        <LandingIllu/> 
                         <p>Shorten, personalize, and share  <br/>
                         fully branded short URLs.
                         </p>
+
                         {/* <Button type="primary" shape="round"
                          onClick={()=>setModalVisible(true)}>START FOR FREE</Button> */}
 

@@ -5,8 +5,8 @@ import { Button, Menu,notification,Avatar,Radio, Space, Table, Tag } from 'antd'
 import {
   useNavigate,useLocation
  } from "react-router-dom";
-import { getAuth,signOut} from 'firebase/auth'
-import {useSelector} from 'react-redux'
+import { getAuth,signOut,onAuthStateChanged} from 'firebase/auth'
+import {useDispatch, useSelector} from 'react-redux'
 
 import DashboardDefault from './Default/DashboardDefault';
 import Navbar from '../Navbar';
@@ -17,13 +17,35 @@ import CreateUrl from './Default/CreateUrl';
 export default function Dashboard() {
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [showDrawer,setShowDrower] = useState(true)
   const [currentMenu,setCurrentMenu] = useState('DASHBOARD')
   const user = useSelector(state=>state.login.oauthDetails)
   const location = useLocation();
 
   useEffect(()=>{
-    console.log('route changed',location)
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        console.log('auth state check',user)
+    if (user) {
+        const uid = user.uid;
+        openNotificationWithIcon('success','Login Success','Logged in successfully!')
+        
+        dispatch({type:'USER_LOGIN_SUCCESS',payload:{isLoggedIn:true,
+        oauthDetails:user,
+        userConfig:{membership:{plan:'TIER 1',planExpiry:'22/10/2023',planStarted:'22/10/2022'}}
+        }})
+        navigate('/dashboard/default')
+    
+    } else {
+        navigate('/')
+    }
+    });
+   
+   
+},[])
+  useEffect(()=>{
+    // console.log('route changed',location)
   },[location])
 
     var openNotificationWithIcon = (type,msg,desc) => {

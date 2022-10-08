@@ -5,7 +5,7 @@ import {AppstoreOutlined,
     FilterOutlined,
     ReloadOutlined
     } from '@ant-design/icons';
-import { Button, Menu,notification,Avatar,Radio, Space, Table, Tag ,Spin,Typography} from 'antd';
+import { Button, Empty,notification,Avatar,Radio, Space, Table, Tag ,Spin,Typography} from 'antd';
   import {
   BrowserRouter as Router,
   Routes,
@@ -38,10 +38,13 @@ export default function DashboardDefault() {
       });
     };
     useEffect(()=>{
-     fetchCustomerUrls()
-        
+      console.log('default user redux hook',user)
+      if(user.email ){
+        fetchCustomerUrls()
+      }
+    
        
-    },[])
+    },[user])
       
    const fetchCustomerUrls = ()=>{
     setIsFetching(true)
@@ -82,7 +85,12 @@ export default function DashboardDefault() {
             
             </div>
             
-            <div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-2">
+
+            {
+              (isFetching===false && urlData.length!==0) ?
+
+
+<div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-2">
                 
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -141,6 +149,14 @@ export default function DashboardDefault() {
                     </tbody>
                 </table>
             </div>
+              :
+            <div className='mt-10 p-10'>
+              <Empty/>
+            
+            </div>
+            
+            }
+            
 
 
             </>
