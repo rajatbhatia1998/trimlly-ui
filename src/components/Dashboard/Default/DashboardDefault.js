@@ -50,6 +50,27 @@ export default function DashboardDefault() {
     
        
     },[user])
+    const handleDeleteSlug = (slug)=>{
+      axios.post(URLS.CUSTOMER.DELETE_SLUG + slug).then(res=>{
+        if(res.data.status){
+          openNotificationWithIcon('success',
+          'Delete Success',
+          res.data.message
+          )
+          fetchCustomerUrls()
+        }else{
+          openNotificationWithIcon('error',
+          'ERROR',
+          res.data.message
+          )
+        }
+      }).catch(err=>{
+        openNotificationWithIcon('error',
+        'ERROR',
+        err
+        )
+      })
+    }
     const handleDownload = ()=>{
       const canvas = document.getElementById(selectedUrl.slug);
       const pngUrl = canvas
@@ -78,9 +99,12 @@ export default function DashboardDefault() {
         if(res.data.status){
           if(res.data.data.length>0){
             setUrlData(res.data.data)
+          }else{
+            setUrlData([])
           }
          
         }else{
+          setUrlData([])
           openNotificationWithIcon('error',
           'ERROR',
           res.data.message
@@ -201,7 +225,7 @@ export default function DashboardDefault() {
                               <BarChartOutlined style={{fontSize:20}} />
                             </span>
                             
-                            <span className='ml-2 cursor-pointer'>
+                            <span className='ml-2 cursor-pointer' onClick={()=>{handleDeleteSlug(url.slug)}}>
                               <DeleteFilled style={{fontSize:20}} />
                             </span>
                           </td>
