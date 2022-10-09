@@ -3,9 +3,12 @@ import {AppstoreOutlined,
     EditFilled,
     PlusOutlined,
     FilterOutlined,
-    ReloadOutlined
+    ReloadOutlined,
+    BarcodeOutlined,
+    BarChartOutlined,
+    DeleteFilled
     } from '@ant-design/icons';
-import { Result,Button, Empty,notification,Avatar,Radio, Space, Table, Tag ,Spin,Typography} from 'antd';
+import { Result,Button, Empty,notification,Spin,Typography,Modal} from 'antd';
   import {
   BrowserRouter as Router,
   Routes,
@@ -19,6 +22,7 @@ import axios from 'axios';
 import URLS from '../../../extras/enviroment'
 import {getFormatedDate,getRedirectUrl} from '../../../extras/commanScript'
 import '../../css/dashboard.css'
+import QRCode from 'qrcode.react'
 const { Text, Link } = Typography;
 
 
@@ -29,7 +33,8 @@ export default function DashboardDefault() {
     const [isFetching,setIsFetching] = useState(true)
     const [urlData,setUrlData] = useState([])
     const user = useSelector(state=>state.login.oauthDetails)
- 
+    const [generateQrCode,setGenerateQrCode] = useState(false)
+    const [selectedUrl,setSelectedUrl] = useState({})
     var openNotificationWithIcon = (type,msg,desc) => {
       notification[type]({
         message: msg,
@@ -45,7 +50,25 @@ export default function DashboardDefault() {
     
        
     },[user])
-      
+    const handleDownload = ()=>{
+      const canvas = document.getElementById(selectedUrl.slug);
+      const pngUrl = canvas
+        .toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
+      let downloadLink = document.createElement("a");
+      downloadLink.href = pngUrl;
+      downloadLink.download = `${selectedUrl.slug}.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+    const handleDownloadCancle = ()=>{
+      setGenerateQrCode(false)
+    }
+    const showQrCode = (url)=>{
+      setGenerateQrCode(true)
+      setSelectedUrl(url)
+    }
    const fetchCustomerUrls = ()=>{
     setIsFetching(true)
       axios.get(URLS.CUSTOMER.GET_USER_URLS+user.email).then((res)=>{
@@ -86,13 +109,37 @@ export default function DashboardDefault() {
               <PlusOutlined /> <span className='ml-1'>CREATE</span></button>
             
             </div>
-            
+            <Modal
+        open={generateQrCode}
+        title={`QR CODE - ${selectedUrl.shortUrl}`}
+        onOk={handleDownload}
+        onCancel={handleDownloadCancle}
+        footer={[
+          <Button key="cancle" onClick={handleDownloadCancle}>
+            Cancle
+          </Button>,
+          <Button key="download" type="primary"  onClick={handleDownload}>
+            Download
+          </Button>
+        ]}
+      >
+        <div className='flex justify-center items-center'>
+        <QRCode
+        id={selectedUrl.slug}
+        value={selectedUrl.shortUrl}
+        size={290}
+        level={"H"}
+        includeMargin={true}
+      />
+        </div>
+          
+      </Modal>
 
             {
               (isFetching===false && urlData.length!==0) ?
 
 
-<div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-2">
+        <div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-2">
                 
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -144,7 +191,19 @@ export default function DashboardDefault() {
                               {url.clicks}
                           </td>
                           <td class="py-4 px-6">
-                          <EditFilled/>
+                            <span className='ml-2 cursor-pointer'>
+                              <EditFilled style={{fontSize:20}} />
+                            </span>
+                            <span className='ml-2 cursor-pointer' onClick={()=>{showQrCode(url)}}>
+                            <BarcodeOutlined style={{fontSize:20}} />
+                            </span>
+                            <span className='ml-2 cursor-pointer'>
+                              <BarChartOutlined style={{fontSize:20}} />
+                            </span>
+                            
+                            <span className='ml-2 cursor-pointer'>
+                              <DeleteFilled style={{fontSize:20}} />
+                            </span>
                           </td>
                       </tr>
                         })}

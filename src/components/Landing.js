@@ -38,6 +38,7 @@ const { Text, Link } = Typography;
  function Landing() {
     const navigate = useNavigate();
     const dispatch = useDispatch()
+    const [isAppLoading,setIsAppLoading] = useState(false)
     const [modalVisible,setModalVisible] = useState(false);
     const [isUrlShortening,setUrlShortening] = useState(false)
     const [currentShortn,setCurrentShorten] = useState({})
@@ -48,8 +49,31 @@ const { Text, Link } = Typography;
     const [singUpPassword,setsingUpPassword] = useState("")
     const [loginMode,setLoginMode] = useState('LOGIN')
     const [loginProgress,setLoginProgress]  = useState(false)
-    
-    
+    const [appStats,setAppStats] = useState({
+        totalCustomer:0,
+        totalUrls:0
+    })
+    useEffect(()=>{
+        //application stats check
+        setIsAppLoading(true)
+        axios.get(URLS.APPLICATION.STATS).then(resApp=>{
+            if(resApp.data.status){
+                setAppStats(resApp.data)
+            }else{
+                setAppStats({
+                    totalCustomer:100,
+                    totalUrls:103456
+                })
+            }
+            setIsAppLoading(false)
+        }).catch(err=>{
+            setAppStats({
+                totalCustomer:100,
+                totalUrls:103456
+            })
+            setIsAppLoading(false)
+        })
+    },[])
     useEffect(()=>{
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
@@ -239,277 +263,291 @@ const { Text, Link } = Typography;
             });
       }
     return (
-        
-        <div id="container">
-            
-             <Modal title= {loginMode==='LOGIN'?'LOGIN':'SIGNUP'} open={modalVisible} onOk={()=>setModalVisible(false)}  onCancel={()=>setModalVisible(false)}>
-             <Spin tip="Please Wait!" spinning={loginProgress}>
-                <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                            <Form
-                name="basic"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                autoComplete="off"
-                >
-                <Form.Item
-            
-                    label="Email Id"
-                    name="email"
-                    rules={[{ required: true, message: 'Please input your email!' }]}
-                >
-                    <Input  value={loginMode==='LOGIN'?loginUsername:singUpUsername} onChange={handleUserNameChange} />
-                </Form.Item>
-
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                    <Input.Password value={loginMode==='LOGIN'?loginPassword:singUpPassword} onChange={handlePasswordChange} />
-                </Form.Item>
-
-                {/* <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
-                    <Checkbox>Remember me</Checkbox>
-                </Form.Item> */}
-                    <Form.Item label="SINGUP ?" valuePropName="checked">
-                    <Switch onChange={(e)=>{
-                        console.log("switch toggle",e)
-                        if(e){
-                            setLoginMode('SINGUP')
-                            setsingUpUserName(loginUsername)
-                            setsingUpPassword(loginPassword)
-                           
-
-                        }else{
-                            setLoginMode('LOGIN')
-                            setLoginPassword(singUpPassword)
-                            setLoginUserName(singUpUsername)
-                          
-                        }
-                    }}  />
-                    </Form.Item>
-
-
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button type="primary" htmlType="submit"
-                    onClick= {()=>{loginMode==='LOGIN'?handleLogin():handleSingUp()}}
-                    >
-                    {loginMode==='LOGIN'?'LOGIN':'SIGNUP'}
-                    </Button>
-                </Form.Item>
-
-                </Form>
-                 <a  onClick={()=>{handleGoogleLogin()}} className="flex flex-row border-2 p-2 rounded-sm" href="#"><img src="https://img.icons8.com/color/16/000000/google-logo.png" width={20} style={{padding:2,marginRight:5}}/>GOOGLE</a> <br/>
-                                
-                            
+        <>
+            {
+                isAppLoading ?
+                <div className='flex h-screen justify-center align-middle items-center'>
+                    <Spin size='large'></Spin>
                 </div>
-            </Spin> 
-      </Modal>
-    
-        <Fade>
-            {/* <nav id="top-nav">
-                 <img width={100} height={100} src='./trimllyLogo.png'/>
-                 <div id="links">
-                    <InstagramOutlined  style={{fontSize:"30px"}}/>
-                    <GithubOutlined  style={{fontSize:"30px",marginLeft:"5px"}}/>
-                 </div>
-            </nav> */}
+                :
+                <div id="container">
             
-
-            <nav class="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-900 fixed w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600">
-  <div class="container flex flex-wrap justify-between items-center mx-auto">
-  <a href="https://flowbite.com/" class="flex items-center">
-      <img src='./trimllyLogo.png'  class="mr-3 h-20 sm:h-20" alt="Trimlly Logo"/>
-      {/* <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Trimlly</span> */}
-  </a>
-  <div class="flex md:order-2">
-      <button onClick={()=>setModalVisible(true)} type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Get started</button>
-      
-  </div>
-  
-  </div>
-</nav>
-
-
-        </Fade>
-            <Divider/>
-            <div id="middle">
-                
-           
-                <Fade left>
-                    <div id="middle-btn-grp">
-                        <LandingIllu/> 
-                        <p>Shorten, personalize, and share  <br/>
-                        fully branded short URLs.
-                        </p>
-
-                        {/* <Button type="primary" shape="round"
-                         onClick={()=>setModalVisible(true)}>START FOR FREE</Button> */}
-
-                         
-                    
-                    </div>
-            </Fade>
-            
-            <Fade right>
-                    
-                <div style={{display:"flex",flexDirection:"column",flexWrap:"wrap",justifyContent:"center",alignItems:"center"}}>
+                <Modal title= {loginMode==='LOGIN'?'LOGIN':'SIGNUP'} open={modalVisible} onOk={()=>setModalVisible(false)}  onCancel={()=>setModalVisible(false)}>
+                <Spin tip="Please Wait!" spinning={loginProgress}>
+                   <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                               <Form
+                   name="basic"
+                   labelCol={{ span: 8 }}
+                   wrapperCol={{ span: 16 }}
+                   autoComplete="off"
+                   >
+                   <Form.Item
                
-                  <Search  style={{marginBottom:10}}  value={currentLongUrl} onChange={(e)=>{setCurrentLongUrl(e.target.value)}}  onSearch={handleUrlShortening} placeholder="Enter your long url here" enterButton="Shorten" size="large" loading={isUrlShortening} />
-                  <Skeleton active title="Short Url" loading={isUrlShortening} >
-                  
-                    {(currentShortn && currentShortn.shortUrl)&&
-                    <Card style={{marginTop:10 }}>
-                    <div id="homeShortner">
-                    <Text style={{marginTop:5}} strong  type='secondary'>{currentShortn.longUrl}</Text>
-                    <Link style={{marginTop:10,marginBottom:10}} href={getRedirectUrl(currentShortn.shortUrl)} target="_blank">
-                        <Text type='danger' strong copyable italic>{currentShortn.shortUrl}</Text>
-                    </Link>
-                    <Popover  content={clickContent} title="Total Clicks">
-                 
-                        <Button size='small' icon={<BarChartOutlined />}  style={{width:100}} >Clicks</Button>
-                    </Popover>
-                    
-                    </div>
-                    </Card>
-                    }
-                   
-                </Skeleton>   
-                  </div>
-                  <div>
-            
-                  <Divider/>
-                  
+                       label="Email Id"
+                       name="email"
+                       rules={[{ required: true, message: 'Please input your email!' }]}
+                   >
+                       <Input  value={loginMode==='LOGIN'?loginUsername:singUpUsername} onChange={handleUserNameChange} />
+                   </Form.Item>
    
-                    
-                 
-              </div>
-                </Fade>
-            </div>
-
-            <Divider/>
-            <Fade bottom>
-            <div id="card-grp">
-                
-                    <Card title="Clickstream & Detailed Statistics" hoverable style={{margin:5}}>
-                    Track the success of every short link and domain with detailed insights .
-                    </Card>
+                   <Form.Item
+                       label="Password"
+                       name="password"
+                       rules={[{ required: true, message: 'Please input your password!' }]}
+                   >
+                       <Input.Password value={loginMode==='LOGIN'?loginPassword:singUpPassword} onChange={handlePasswordChange} />
+                   </Form.Item>
+   
+                   {/* <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
+                       <Checkbox>Remember me</Checkbox>
+                   </Form.Item> */}
+                       <Form.Item label="SINGUP ?" valuePropName="checked">
+                       <Switch onChange={(e)=>{
+                           console.log("switch toggle",e)
+                           if(e){
+                               setLoginMode('SINGUP')
+                               setsingUpUserName(loginUsername)
+                               setsingUpPassword(loginPassword)
+                              
+   
+                           }else{
+                               setLoginMode('LOGIN')
+                               setLoginPassword(singUpPassword)
+                               setLoginUserName(singUpUsername)
+                             
+                           }
+                       }}  />
+                       </Form.Item>
+   
+   
+                   <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                       <Button type="primary" htmlType="submit"
+                       onClick= {()=>{loginMode==='LOGIN'?handleLogin():handleSingUp()}}
+                       >
+                       {loginMode==='LOGIN'?'LOGIN':'SIGNUP'}
+                       </Button>
+                   </Form.Item>
+   
+                   </Form>
+                     <div onClick={()=>{handleGoogleLogin()}} class="google-btn">
+                   <div class="google-icon-wrapper">
+                       <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
+                   </div>
+                   <p class="btn-text"><b>Sign in with google</b></p>
+                   </div>           
+                               
+                   </div>
+               </Spin> 
+         </Modal>
+       
+           <Fade>
+               {/* <nav id="top-nav">
+                    <img width={100} height={100} src='./trimllyLogo.png'/>
+                    <div id="links">
+                       <InstagramOutlined  style={{fontSize:"30px"}}/>
+                       <GithubOutlined  style={{fontSize:"30px",marginLeft:"5px"}}/>
+                    </div>
+               </nav> */}
                
-                
-                    <Card title="Advanced Custom URLs" hoverable style={{margin:5}}>
-                        Create unlimited auto expiry , password protection and qr generated custom url's 
-                    </Card>
+   
+               <nav class="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-900 fixed w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600">
+     <div class="container flex flex-wrap justify-between items-center mx-auto">
+     <a href="https://flowbite.com/" class="flex items-center">
+         <img src='./trimllyLogo.png'  class="mr-3 h-20 sm:h-20" alt="Trimlly Logo"/>
+         {/* <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Trimlly</span> */}
+     </a>
+     <div class="flex md:order-2">
+         <button onClick={()=>setModalVisible(true)} type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Get started</button>
+         
+     </div>
+     
+     </div>
+   </nav>
+   
+   
+           </Fade>
+               <Divider/>
+               <div id="middle">
+                   
               
-                    <Card title="Bio Links" hoverable style={{margin:5}}>
-                        Create bio links for your socials and manage all your social links in one place
-                    </Card>
+                   <Fade left>
+                       <div id="middle-btn-grp">
+                           <LandingIllu/> 
+                           <p>Shorten, personalize, and share  <br/>
+                           fully branded short URLs.
+                           </p>
+   
+                           {/* <Button type="primary" shape="round"
+                            onClick={()=>setModalVisible(true)}>START FOR FREE</Button> */}
+   
+                            
+                       
+                       </div>
+               </Fade>
+               
+               <Fade right>
+                       
+                   <div style={{display:"flex",flexDirection:"column",flexWrap:"wrap",justifyContent:"center",alignItems:"center"}}>
+                  
+                     <Search  style={{marginBottom:10}}  value={currentLongUrl} onChange={(e)=>{setCurrentLongUrl(e.target.value)}}  onSearch={handleUrlShortening} placeholder="Enter your long url here" enterButton="Shorten" size="large" loading={isUrlShortening} />
+                     <Skeleton active title="Short Url" loading={isUrlShortening} >
+                     
+                       {(currentShortn && currentShortn.shortUrl)&&
+                       <Card style={{marginTop:10 }}>
+                       <div id="homeShortner">
+                       <Text style={{marginTop:5}} strong  type='secondary'>{currentShortn.longUrl}</Text>
+                       <Link style={{marginTop:10,marginBottom:10}} href={getRedirectUrl(currentShortn.shortUrl)} target="_blank">
+                           <Text type='danger' strong copyable italic>{currentShortn.shortUrl}</Text>
+                       </Link>
+                       <Popover  content={clickContent} title="Total Clicks">
+                    
+                           <Button size='small' icon={<BarChartOutlined />}  style={{width:100}} >Clicks</Button>
+                       </Popover>
+                       
+                       </div>
+                       </Card>
+                       }
+                      
+                   </Skeleton>   
+                     </div>
+                     <div>
+               
+                     <Divider/>
+                     
+      
+                       
+                    
+                 </div>
+                   </Fade>
+               </div>
+   
+               <Divider/>
+               <Fade bottom>
+               <div id="card-grp">
+                   
+                       <Card title="Clickstream & Detailed Statistics" hoverable style={{margin:5}}>
+                       Track the success of every short link and domain with detailed insights .
+                       </Card>
+                  
+                   
+                       <Card title="Advanced Custom URLs" hoverable style={{margin:5}}>
+                           Create unlimited auto expiry , password protection and qr generated custom url's 
+                       </Card>
+                 
+                       <Card title="Bio Links" hoverable style={{margin:5}}>
+                           Create bio links for your socials and manage all your social links in one place
+                       </Card>
+                   
+                       <Card title="API" hoverable style={{margin:5}}>
+                       Shorten, analyze, and manage URLs with a free API for developers. 
+                       </Card>
                 
-                    <Card title="API" hoverable style={{margin:5}}>
-                    Shorten, analyze, and manage URLs with a free API for developers. 
-                    </Card>
+               </div>
+               </Fade>
+              <Divider/>
              
-            </div>
-            </Fade>
-           <Divider/>
-          
-           
-<div id="detailed-pricing" class="overflow-x-auto w-full">
-    <div class="overflow-hidden min-w-max">
-        <div class="grid grid-cols-4 gap-x-16 p-4 text-sm font-medium text-gray-900 bg-gray-100 border-t border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
-            <div class="flex items-center">Trimlly Features</div>
-            <div>Free</div>
-            <div>Personal</div>
-            <div>Pro</div>
-        </div>
-        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
-            <div class="text-gray-500 dark:text-gray-400">Unlimited Links</div>
-            <div>
-                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div>
-                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div>
-                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            </div>
-        </div>
-        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
-            <div class="text-gray-500 dark:text-gray-400">Password Protected Links</div>
-            <div>
-                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div>
-                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div>
-                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            </div>
-        </div>
-        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
-            <div class="text-gray-500 dark:text-gray-400">Bio Links</div>
-            <div>
-                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </div>
-            
-            <div>
-                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div>
-                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            </div>
-        </div>
-        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
-            <div class="text-gray-500 dark:text-gray-400">Developer API</div>
-            <div>
-                
-                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div>
-                
-                <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </div>
-            <div>
-                <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            </div>
-            
-        </div>
-        <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
-            <div class="text-gray-500 dark:text-gray-400"></div>
-            <div>
-                <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Get Started</a>
-            </div>
-            <div>
-                <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
-            </div>
-            <div>
-                <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="stats">
+              
+   <div id="detailed-pricing" class="overflow-x-auto w-full">
+       <div class="overflow-hidden min-w-max">
+           <div class="grid grid-cols-4 gap-x-16 p-4 text-sm font-medium text-gray-900 bg-gray-100 border-t border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+               <div class="flex items-center">Trimlly Features</div>
+               <div>Free</div>
+               <div>Personal</div>
+               <div>Pro</div>
+           </div>
+           <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+               <div class="text-gray-500 dark:text-gray-400">Unlimited Links</div>
+               <div>
+                   <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+               </div>
+               <div>
+                   <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+               </div>
+               <div>
+                   <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+               </div>
+           </div>
+           <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+               <div class="text-gray-500 dark:text-gray-400">Password Protected Links</div>
+               <div>
+                   <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+               </div>
+               <div>
+                   <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+               </div>
+               <div>
+                   <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+               </div>
+           </div>
+           <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+               <div class="text-gray-500 dark:text-gray-400">Bio Links</div>
+               <div>
+                   <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+               </div>
                
-               <Statistic title="Customers" value={11289} />
-               <Statistic title="Total Shortened URLs" value={125984444}/>
+               <div>
+                   <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+               </div>
+               <div>
+                   <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+               </div>
+           </div>
+           <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+               <div class="text-gray-500 dark:text-gray-400">Developer API</div>
+               <div>
+                   
+                   <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+               </div>
+               <div>
+                   
+                   <svg class="w-5 h-5 text-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+               </div>
+               <div>
+                   <svg class="w-5 h-5 text-green-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+               </div>
                
-           
+           </div>
+           <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
+               <div class="text-gray-500 dark:text-gray-400"></div>
+               <div>
+                   <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Get Started</a>
+               </div>
+               <div>
+                   <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
+               </div>
+               <div>
+                   <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
+               </div>
+           </div>
        </div>
-      <Divider/>
-          <Footer/>
-
-           {/* <Modal
-           title="Login "
-           centered
-           visible={modalVisible}
-           onOk={() => setModalVisible(false)}
-           onCancel={() => setModalVisible(false)}
-         >
-         <Suspense fallback={<Spin size={40} style={{textAlign:"center"}}/>}>
-             <OAuth/>
-         </Suspense>
-           
-         </Modal> */}
-        </div>
+   </div>
+   <div id="stats">
+                  
+                  <Statistic title="Customers" value={appStats.totalCustomer} />
+                  <Statistic title="Total Shortened URLs" value={appStats.totalUrls}/>
+                  
+              
+          </div>
+         <Divider/>
+             <Footer/>
+   
+              {/* <Modal
+              title="Login "
+              centered
+              visible={modalVisible}
+              onOk={() => setModalVisible(false)}
+              onCancel={() => setModalVisible(false)}
+            >
+            <Suspense fallback={<Spin size={40} style={{textAlign:"center"}}/>}>
+                <OAuth/>
+            </Suspense>
+              
+            </Modal> */}
+           </div>
+            }
+        
+        </>
+      
     )
 }
 

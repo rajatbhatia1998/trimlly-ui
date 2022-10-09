@@ -13,6 +13,9 @@ const URLS = {
         GET_USER_URLS : server_url+'/url/getUrls/', //:userId
         GET_MEMVERSHIP_CONFIG: server_url + '/membership/plan/', //:userId,
         CREATE_SHORTN:server_url+'/url/create',
+    },
+    APPLICATION:{
+        STATS:server_url + '/stats/app'
     }
 
 }
