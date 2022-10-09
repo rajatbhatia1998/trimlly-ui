@@ -29,6 +29,7 @@ import {useSelector,useDispatch} from 'react-redux'
 import {USER_LOGIN_SUCCESS} from '../redux/action/actionTypes'
 import {getRedirectUrl} from '../extras/commanScript'
 import {ReactComponent as LandingIllu} from './common/landingIllu.svg'
+
 const { Search } = Input;
 const { Text, Link } = Typography;
 
@@ -262,6 +263,36 @@ const { Text, Link } = Typography;
             openNotificationWithIcon('error','Login Error',errorMessage)
             });
       }
+     const  onPayClick = async(amount)=>{
+        let order = await axios.post(URLS.CUSTOMER.CREATE_ORDER_TO_UPGRADE,{amount:amount})
+        console.log(order)
+        var options = {
+            "key": "rzp_test_RIrUEwLm14CUHl", // Enter the Key ID generated from the Dashboard
+            "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Trimlly",
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo",
+            "order_id": order.orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
+            "prefill": {
+                "name": "Rajat Bhatia",
+                "email": "rajat.bhatia859@gmail.com",
+                "contact": "9023788306"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzp1 = new window.Razorpay(options);
+    
+        rzp1.open();
+       
+
+     }
     return (
         <>
             {
@@ -509,14 +540,14 @@ const { Text, Link } = Typography;
            </div>
            <div class="grid grid-cols-4 gap-x-16 py-5 px-4 text-sm text-gray-700 border-b border-gray-200 dark:border-gray-700">
                <div class="text-gray-500 dark:text-gray-400"></div>
-               <div>
+               <div >
                    <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Get Started</a>
                </div>
-               <div>
-                   <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
+               <div onClick={()=>{onPayClick('10000')}}>
+                   <a  class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
                </div>
-               <div>
-                   <a href="#" class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
+               <div onClick={()=>{onPayClick('20000')}}>
+                   <a  class="text-white block w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:focus:ring-blue-900">Buy now</a>
                </div>
            </div>
        </div>

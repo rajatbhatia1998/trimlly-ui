@@ -13,7 +13,8 @@ const URLS = {
         GET_USER_URLS : server_url+'/url/getUrls/', //:userId
         GET_MEMVERSHIP_CONFIG: server_url + '/membership/plan/', //:userId,
         CREATE_SHORTN:server_url+'/url/create',
-        DELETE_SLUG:server_url + '/url/delete/' //:slug
+        DELETE_SLUG:server_url + '/url/delete/', //:slug,
+        CREATE_ORDER_TO_UPGRADE : server_url + '/membership/order/create'
     },
     APPLICATION:{
         STATS:server_url + '/stats/app'
