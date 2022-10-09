@@ -23,6 +23,7 @@ import URLS from '../../../extras/enviroment'
 import {getFormatedDate,getRedirectUrl} from '../../../extras/commanScript'
 import '../../css/dashboard.css'
 import QRCode from 'qrcode.react'
+import {ADD_CUSTOMER_LINKS} from '../../../redux/action/actionTypes'
 const { Text, Link } = Typography;
 
 
@@ -30,8 +31,9 @@ const { Text, Link } = Typography;
  
 export default function DashboardDefault() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
     const [isFetching,setIsFetching] = useState(true)
-    const [urlData,setUrlData] = useState([])
+    const urlData = useSelector(state=>state.dashboard.normalLinks)
     const user = useSelector(state=>state.login.oauthDetails)
     const [generateQrCode,setGenerateQrCode] = useState(false)
     const [selectedUrl,setSelectedUrl] = useState({})
@@ -98,13 +100,13 @@ export default function DashboardDefault() {
      
         if(res.data.status){
           if(res.data.data.length>0){
-            setUrlData(res.data.data)
+            dispatch({type:ADD_CUSTOMER_LINKS,payload:res.data.data})
           }else{
-            setUrlData([])
+            dispatch({type:ADD_CUSTOMER_LINKS,payload:[]})
           }
          
         }else{
-          setUrlData([])
+          dispatch({type:ADD_CUSTOMER_LINKS,payload:[]})
           openNotificationWithIcon('error',
           'ERROR',
           res.data.message
@@ -121,7 +123,7 @@ export default function DashboardDefault() {
             <Spin tip='Loading...'/> : 
             </div>:
             <>
-              <div className='flex flex-row justify-end mr-2'>
+              <div className='flex flex-row justify-end mr-2 mt-3'>
              
               <button className=' px-3 mr-2 py-1' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around'}}> 
               <FilterOutlined /> <span className='ml-1'>FILTER</span></button>
@@ -163,7 +165,7 @@ export default function DashboardDefault() {
               (isFetching===false && urlData.length!==0) ?
 
 
-        <div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-2">
+        <div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-10">
                 
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

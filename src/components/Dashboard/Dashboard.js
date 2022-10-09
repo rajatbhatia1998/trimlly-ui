@@ -10,11 +10,12 @@ import {useDispatch, useSelector} from 'react-redux'
 
 import DashboardDefault from './Default/DashboardDefault';
 import Navbar from '../Navbar';
-import Analytics from './Analytics';
+import AnalyticsDefault from './Analytics/AnalyticsDefault';
 import CreateUrl from './Default/CreateUrl';
 import axios from 'axios';
 import URLS from '../../extras/enviroment';
 import {USER_LOGIN_SUCCESS,SET_MEMBERSHIP_CONFIG} from '../../redux/action/actionTypes'
+import SecureDefault from './Secure/SecureDefault';
 
 export default function Dashboard() {
 
@@ -88,7 +89,8 @@ export default function Dashboard() {
     <div className=''>
       {location.pathname==="/dashboard/default" && <DashboardDefault/>}
       {location.pathname==="/dashboard/default/create" && <CreateUrl/>}
-      {location.pathname==="/dashboard/analytics" && <Analytics/>}
+      {location.pathname==="/dashboard/analytics" && <AnalyticsDefault/>}
+      {location.pathname==="/dashboard/secure" && <SecureDefault/>}
     </div>
     
     </div>

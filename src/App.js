@@ -18,9 +18,10 @@ import app from './extras/firebase'
 import Landing from './components/Landing'
 import Dashboard from './components/Dashboard/Dashboard'
 import DashboardDefault from './components/Dashboard/Default/DashboardDefault';
-import Analytics from './components/Dashboard/Analytics';
+import AnalyticsDefault from './components/Dashboard/Analytics/AnalyticsDefault';
 import CreateUrl from './components/Dashboard/Default/CreateUrl';
 import {getAuth,onAuthStateChanged} from 'firebase/auth'
+import SecureDefault from './components/Dashboard/Secure/SecureDefault';
 function App() {
   const [loading,setLoading] = useState(true)
   const [isLoggedIn,setIsLoggedIn] = useState(false)
@@ -53,10 +54,14 @@ function App() {
               
           <Route path="/dashboard" element={<Dashboard/>}>
                <Route path='default' element={<DashboardDefault />} >
-               <Route path='create' element={<CreateUrl />} />
-               <Route path='edit' element={<Analytics />} />
+                    <Route path='create' element={<CreateUrl />} />
+                    <Route path='edit' element={<CreateUrl />} />
                 </Route>
-               <Route path='analytics' element={<Analytics />} />
+                 <Route path='secure' element={<SecureDefault />} />
+                  
+                
+               <Route path='analytics' element={<AnalyticsDefault />} />
+
           </Route>
           <Route path="/:slug" element={<ShortUrlRedirect />} />
         
