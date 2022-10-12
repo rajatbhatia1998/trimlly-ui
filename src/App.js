@@ -22,6 +22,9 @@ import AnalyticsDefault from './components/Dashboard/Analytics/AnalyticsDefault'
 import CreateUrl from './components/Dashboard/Default/CreateUrl';
 import {getAuth,onAuthStateChanged} from 'firebase/auth'
 import SecureDefault from './components/Dashboard/Secure/SecureDefault';
+import UpgradePlans from './components/Dashboard/Upgrade/UpgradePlans';
+import NotFound from './components/NotFound';
+
 function App() {
   const [loading,setLoading] = useState(true)
   const [isLoggedIn,setIsLoggedIn] = useState(false)
@@ -57,15 +60,16 @@ function App() {
                     <Route path='create' element={<CreateUrl />} />
                     <Route path='edit' element={<CreateUrl />} />
                 </Route>
-                 <Route path='secure' element={<SecureDefault />} />
+                <Route path='secure' element={<SecureDefault />} />
                   
-                
+                <Route path='upgrade' element={<UpgradePlans />} />
                <Route path='analytics' element={<AnalyticsDefault />} />
+               <Route path='*' element={<NotFound />} />
 
           </Route>
           <Route path="/:slug" element={<ShortUrlRedirect />} />
         
-         
+          {/* <Route path='*' element={<NotFound />} /> */}
           
            
         

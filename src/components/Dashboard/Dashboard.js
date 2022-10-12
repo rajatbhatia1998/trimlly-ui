@@ -16,6 +16,8 @@ import axios from 'axios';
 import URLS from '../../extras/enviroment';
 import {USER_LOGIN_SUCCESS,SET_MEMBERSHIP_CONFIG} from '../../redux/action/actionTypes'
 import SecureDefault from './Secure/SecureDefault';
+import UpgradePlans from './Upgrade/UpgradePlans';
+import NotFound from '../NotFound';
 
 export default function Dashboard() {
 
@@ -80,6 +82,24 @@ export default function Dashboard() {
       });
     };
 
+    const getRouteScreen = (path)=>{
+      switch(path){
+        case "/dashboard/default":
+          return  <DashboardDefault/>
+        case "/dashboard/default/create":
+            return <CreateUrl/>
+        case "/dashboard/analytics":
+          return <AnalyticsDefault/>
+        case "/dashboard/secure":
+            return <SecureDefault/>
+        case "/dashboard/upgrade":
+            return <UpgradePlans/>
+        default:
+            <NotFound/>
+      }
+        
+
+    }
   return (
 
     <div>
@@ -87,10 +107,12 @@ export default function Dashboard() {
   
  
     <div className=''>
-      {location.pathname==="/dashboard/default" && <DashboardDefault/>}
+      {getRouteScreen(location.pathname)}
+      {/* {location.pathname==="/dashboard/default" && <DashboardDefault/>}
       {location.pathname==="/dashboard/default/create" && <CreateUrl/>}
       {location.pathname==="/dashboard/analytics" && <AnalyticsDefault/>}
       {location.pathname==="/dashboard/secure" && <SecureDefault/>}
+      {location.pathname==="/dashboard/upgrade" && <UpgradePlans/>} */}
     </div>
     
     </div>
