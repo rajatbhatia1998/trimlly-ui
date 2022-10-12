@@ -2,35 +2,74 @@ import React,{useEffect,useState} from 'react'
 import {useSelector,useDispatch} from 'react-redux'
 import axios from 'axios';
 import URLS from '../../../extras/enviroment'
+import { notification } from 'antd';
+import Intl from 'intl'
+import 'intl/locale-data/jsonp/en-IN'
 export default function UpgradePlans() {
+    const user = useSelector(state=>state.login.oauthDetails)
+    const configs = useSelector(state=>state.configs)
+    const [plans,setPlans] = useState({
+        personal:{
+            
+            
+        },
+        pro:{
+            
+        }
+    })
+    useEffect(()=>{
+       const perosnalPrice = 1000
+       const proPrice = 2000
 
-
-    const  onPayClick = async(amount)=>{
-        let order = await axios.post(URLS.CUSTOMER.CREATE_ORDER_TO_UPGRADE,{amount:amount})
+       setPlans({
+        personal:{
+            
+            amount:perosnalPrice,
+            formatedAmount:new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(perosnalPrice)
+        },
+        pro:{
+            amount:proPrice,
+            formatedAmount:new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(proPrice)
+        }
+       })
+      
+       
+    },[])
+var openNotificationWithIcon = (type,msg,desc) => {
+      notification[type]({
+        message: msg,
+        description:desc
+          
+      });
+    };
+    const  onPayClick = async(amount,planType)=>{
+        let order = await axios.post(URLS.CUSTOMER.CREATE_ORDER_TO_UPGRADE,{amount:amount*100})
         console.log(order)
         var options = {
             "key": "rzp_test_RIrUEwLm14CUHl", // Enter the Key ID generated from the Dashboard
-            "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "amount": amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             "currency": "INR",
             "name": "Trimlly",
-            "description": "Test Transaction",
-            "image": "https://example.com/your_logo",
-            "order_id": order.orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-            "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
+            "description": "Trimlly Plan upgrade",
+            "image": 'https://www.trimlly.com/trimllyLogo.png',
+            "order_id": order.id,
+            // "handler": function (response){
+            //     console.log('paymemnt handlor',response)
+            //     alert(response.razorpay_payment_id);
+            //     alert(response.razorpay_order_id);
+            //     alert(response.razorpay_signature)
+            // },
+            "callback_url": `${URLS.CUSTOMER.PAYMENT_VERIFY}${planType}/${user.email}`,
             "prefill": {
-                "name": "Rajat Bhatia",
-                "email": "rajat.bhatia859@gmail.com",
-                "contact": "9023788306"
-            },
-            "notes": {
-                "address": "Razorpay Corporate Office"
-            },
-            "theme": {
-                "color": "#3399cc"
+                "name": user.displayName ? user.displayName : user.email,
+                "email": user.email,
+                "contact":"9023788306"
             }
         };
         var rzp1 = new window.Razorpay(options);
-    
+        rzp1.on('payment.failed', function (response){
+            openNotificationWithIcon('error','Payment Failed',response.error.description)
+    });
         rzp1.open();
        
 
@@ -88,7 +127,7 @@ export default function UpgradePlans() {
               <h3 class="mb-4 text-2xl font-semibold">Personal</h3>
               <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Relevant for personal use, extended & premium support & features.</p>
               <div class="flex justify-center items-baseline my-8">
-                  <span class="mr-2 text-5xl font-extrabold">$10</span>
+                  <span class="mr-2 text-5xl font-extrabold">{plans.personal.formatedAmount}</span>
                   <span class="text-gray-500 dark:text-gray-400">/year</span>
               </div>
               {/* <!-- List --> */}
@@ -116,14 +155,14 @@ export default function UpgradePlans() {
                       <span>Support:<span class="font-semibold">24 Months</span></span>
                   </li>
               </ul>
-              <a href="#" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
+              <a onClick={()=>onPayClick(plans.personal.amount,'PERSONAL')} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
           </div>
           {/* <!-- Pricing Card --> */}
           <div class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
               <h3 class="mb-4 text-2xl font-semibold">Pro</h3>
               <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Best for large scale uses and all features of the product</p>
               <div class="flex justify-center items-baseline my-8">
-                  <span class="mr-2 text-5xl font-extrabold">$20</span>
+                  <span class="mr-2 text-5xl font-extrabold">{plans.pro.formatedAmount}</span>
                   <span class="text-gray-500 dark:text-gray-400">/year</span>
               </div>
               {/* <!-- List --> */}
@@ -151,7 +190,7 @@ export default function UpgradePlans() {
                       <span>Support:<span class="font-semibold">24 Months</span></span>
                   </li>
               </ul>
-              <a onClick={()=>onPayClick()} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
+              <a onClick={()=>onPayClick(plans.pro.amount,'PRO')} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
           </div>
       </div>
   </div>

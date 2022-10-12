@@ -54,6 +54,15 @@ const { Text, Link } = Typography;
         totalCustomer:0,
         totalUrls:0
     })
+    const [plans,setPlans] = useState({
+        personal:{
+            
+            
+        },
+        pro:{
+            
+        }
+    })
     useEffect(()=>{
         //application stats check
         setIsAppLoading(true)
@@ -93,6 +102,21 @@ const { Text, Link } = Typography;
             navigate('/')
         }
         });
+        const perosnalPrice = 1000
+       const proPrice = 2000
+
+       setPlans({
+        personal:{
+            
+            amount:perosnalPrice,
+            formatedAmount:new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(perosnalPrice)
+        },
+        pro:{
+            amount:proPrice,
+            formatedAmount:new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(proPrice)
+        }
+       })
+      
        
        
     },[])
@@ -491,14 +515,14 @@ const { Text, Link } = Typography;
                       <span>Support:<span class="font-semibold">24 Months</span></span>
                   </li>
               </ul>
-              <a onClick={()=>onPayClick()} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">get Started</a>
+              <a href="#" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Current Plan</a>
           </div>
           {/* <!-- Pricing Card --> */}
           <div class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
               <h3 class="mb-4 text-2xl font-semibold">Personal</h3>
               <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Relevant for personal use, extended & premium support & features.</p>
               <div class="flex justify-center items-baseline my-8">
-                  <span class="mr-2 text-5xl font-extrabold">$10</span>
+                  <span class="mr-2 text-5xl font-extrabold">{plans.personal.formatedAmount}</span>
                   <span class="text-gray-500 dark:text-gray-400">/year</span>
               </div>
               {/* <!-- List --> */}
@@ -526,14 +550,14 @@ const { Text, Link } = Typography;
                       <span>Support:<span class="font-semibold">24 Months</span></span>
                   </li>
               </ul>
-              <a onClick={()=>onPayClick()}class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
+              <a onClick={()=>onPayClick(plans.personal.amount)} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
           </div>
           {/* <!-- Pricing Card --> */}
           <div class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
               <h3 class="mb-4 text-2xl font-semibold">Pro</h3>
               <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Best for large scale uses and all features of the product</p>
               <div class="flex justify-center items-baseline my-8">
-                  <span class="mr-2 text-5xl font-extrabold">$20</span>
+                  <span class="mr-2 text-5xl font-extrabold">{plans.pro.formatedAmount}</span>
                   <span class="text-gray-500 dark:text-gray-400">/year</span>
               </div>
               {/* <!-- List --> */}
@@ -561,7 +585,7 @@ const { Text, Link } = Typography;
                       <span>Support:<span class="font-semibold">24 Months</span></span>
                   </li>
               </ul>
-              <a onClick={()=>onPayClick()} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
+              <a onClick={()=>onPayClick(plans.pro.amount)} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
           </div>
       </div>
   </div>

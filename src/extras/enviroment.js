@@ -1,5 +1,5 @@
-const server_url = "https://trimlly-server.herokuapp.com"
-
+//const server_url = "https://trimlly-server.herokuapp.com"
+const server_url = 'http://localhost:3001'
 
 const URLS = {
 
@@ -14,7 +14,8 @@ const URLS = {
         GET_MEMVERSHIP_CONFIG: server_url + '/membership/plan/', //:userId,
         CREATE_SHORTN:server_url+'/url/create',
         DELETE_SLUG:server_url + '/url/delete/', //:slug,
-        CREATE_ORDER_TO_UPGRADE : server_url + '/membership/order/create'
+        CREATE_ORDER_TO_UPGRADE : server_url + '/membership/order/create',
+        PAYMENT_VERIFY : server_url + '/membership/payment/verify/'//:planType/:email
     },
     APPLICATION:{
         STATS:server_url + '/stats/app'

@@ -24,7 +24,7 @@ import {getAuth,onAuthStateChanged} from 'firebase/auth'
 import SecureDefault from './components/Dashboard/Secure/SecureDefault';
 import UpgradePlans from './components/Dashboard/Upgrade/UpgradePlans';
 import NotFound from './components/NotFound';
-
+import PaymentStatus from './components/Dashboard/Upgrade/PaymentStatus';
 function App() {
   const [loading,setLoading] = useState(true)
   const [isLoggedIn,setIsLoggedIn] = useState(false)
@@ -68,7 +68,7 @@ function App() {
 
           </Route>
           <Route path="/:slug" element={<ShortUrlRedirect />} />
-        
+          <Route path="/paymentStatus/:planType/:orderId" element={<PaymentStatus />} />
           {/* <Route path='*' element={<NotFound />} /> */}
           
            
