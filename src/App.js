@@ -25,6 +25,9 @@ import SecureDefault from './components/Dashboard/Secure/SecureDefault';
 import UpgradePlans from './components/Dashboard/Upgrade/UpgradePlans';
 import NotFound from './components/NotFound';
 import PaymentStatus from './components/Dashboard/Upgrade/PaymentStatus';
+import BioLinkDefault from './components/Dashboard/BioLink/BioLinkDefault';
+import CreateBioLink from './components/Dashboard/BioLink/CreateBioLink';
+
 function App() {
   const [loading,setLoading] = useState(true)
   const [isLoggedIn,setIsLoggedIn] = useState(false)
@@ -60,6 +63,12 @@ function App() {
                     <Route path='create' element={<CreateUrl />} />
                     <Route path='edit' element={<CreateUrl />} />
                 </Route>
+                <Route path='bioLinks' element={<BioLinkDefault />} >
+                    <Route path='create' element={<CreateBioLink />} />
+                  </Route>
+                    
+      
+                
                 <Route path='secure' element={<SecureDefault />} />
                   
                 <Route path='upgrade' element={<UpgradePlans />} />

@@ -18,6 +18,12 @@ import {USER_LOGIN_SUCCESS,SET_MEMBERSHIP_CONFIG} from '../../redux/action/actio
 import SecureDefault from './Secure/SecureDefault';
 import UpgradePlans from './Upgrade/UpgradePlans';
 import NotFound from '../NotFound';
+import BioLinkDefault from './BioLink/BioLinkDefault';
+import CreateBioLink from './BioLink/CreateBioLink';
+
+
+
+
 
 export default function Dashboard() {
 
@@ -56,7 +62,7 @@ export default function Dashboard() {
    
 },[])
   useEffect(()=>{
-    // console.log('route changed',location)
+    
   },[location])
 
     var openNotificationWithIcon = (type,msg,desc) => {
@@ -66,21 +72,7 @@ export default function Dashboard() {
           
       });
     };
-    const handleLogout = ()=>{
-      const auth = getAuth();
-    signOut(auth).then(() => {
-      openNotificationWithIcon('success',
-      'Logout Success',
-      'You have been logged out successfully !'
-      )
-      navigate('/')
-    }).catch((error) => {
-      openNotificationWithIcon('error',
-      'Service error',
-      error.errorMessage
-      )
-      });
-    };
+   
 
     const getRouteScreen = (path)=>{
       switch(path){
@@ -94,6 +86,10 @@ export default function Dashboard() {
             return <SecureDefault/>
         case "/dashboard/upgrade":
             return <UpgradePlans/>
+        case "/dashboard/bioLinks":
+          return <BioLinkDefault/>
+        case '/dashboard/bioLinks/create':
+            return <CreateBioLink/>
         default:
             <NotFound/>
       }
@@ -108,11 +104,6 @@ export default function Dashboard() {
  
     <div className=''>
       {getRouteScreen(location.pathname)}
-      {/* {location.pathname==="/dashboard/default" && <DashboardDefault/>}
-      {location.pathname==="/dashboard/default/create" && <CreateUrl/>}
-      {location.pathname==="/dashboard/analytics" && <AnalyticsDefault/>}
-      {location.pathname==="/dashboard/secure" && <SecureDefault/>}
-      {location.pathname==="/dashboard/upgrade" && <UpgradePlans/>} */}
     </div>
     
     </div>

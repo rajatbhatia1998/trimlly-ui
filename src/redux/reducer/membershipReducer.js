@@ -6,7 +6,8 @@ import {
 
 const membershipState = {
     configs:{},
-    membership:{}
+    membership:{},
+    paymentDetails:{}
 };
 
 
@@ -17,7 +18,8 @@ export default  function (state=membershipState,action){
             return {
                 ...state,
                membership:action.payload.membershipInfo,
-               configs:action.payload.configs
+               configs:action.payload.configs,
+               paymentDetails:action.payload.paymentDetails
             }
        
         default:

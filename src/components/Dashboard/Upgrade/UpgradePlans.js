@@ -9,6 +9,7 @@ export default function UpgradePlans() {
     const user = useSelector(state=>state.login.oauthDetails)
     const configs = useSelector(state=>state.configs)
     const membership = configs.membership
+    const paymentDetails = configs.paymentDetails ? configs.paymentDetails : null
     const [plans,setPlans] = useState({
         personal:{
             
@@ -18,24 +19,29 @@ export default function UpgradePlans() {
             
         }
     })
+   const formatAmount = (amount)=>{
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount)
+    }
     useEffect(()=>{
        const perosnalPrice = 1000
        const proPrice = 2000
+
 
        setPlans({
         personal:{
             
             amount:perosnalPrice,
-            formatedAmount:new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(perosnalPrice)
+            formatedAmount:formatAmount(perosnalPrice)
         },
         pro:{
             amount:proPrice,
-            formatedAmount:new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(proPrice)
+            formatedAmount:formatAmount(proPrice)
         }
        })
       
        
     },[])
+
 var openNotificationWithIcon = (type,msg,desc) => {
       notification[type]({
         message: msg,
@@ -84,7 +90,7 @@ var openNotificationWithIcon = (type,msg,desc) => {
      }
    
   return (
-    <div className='container mx-auto'>
+    <div className='container mx-auto pb-10'>
       
       <section class="bg-white dark:bg-gray-900">
   <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
@@ -201,8 +207,20 @@ var openNotificationWithIcon = (type,msg,desc) => {
           </div>
       </div>
   </div>
-</section>
+    </section>
 
+    {
+        paymentDetails &&
+        <div className='flex flex-col pl-10'>
+            
+            <span className='font-bold text-xl' >Last Payment Details:</span>
+            <span className='text-l' >Plan Type: <span className='font-bold text-l'>{membership.planType}</span> </span>
+            <span className='text-l'>Method : <span className='font-bold text-l'>{paymentDetails.method}</span></span>
+            <span className='text-l'> Amount Paid : <span className='font-bold text-l'>{formatAmount(paymentDetails.amount/100)}</span></span>
+            <span className='text-l'>Purchase Date: <span className='font-bold text-l'>{membership.planStarted}</span></span>
+            <span className='text-l'>Expiry Date: <span className='font-bold text-l'> {membership.planExpiry}</span></span>
+        </div>
+    }
     </div>
   )
 }

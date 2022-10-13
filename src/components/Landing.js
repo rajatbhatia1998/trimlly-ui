@@ -189,7 +189,8 @@ const { Text, Link } = Typography;
         const CREATE_BODY = {
             "userType":"GUEST",
             "userId":getGuestId(),
-            "longUrl":currentLongUrl
+            "longUrl":currentLongUrl,
+            'urlType':"NORMAL"
           }
         //api call for shortening
         axios.post(URLS.GUEST_URL.CREATE_SHORTN,CREATE_BODY).then(res=>{
