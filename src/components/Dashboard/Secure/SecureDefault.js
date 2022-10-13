@@ -29,7 +29,7 @@ const { Text, Link } = Typography;
 export default function SecureDefault() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-    const [isFetching,setIsFetching] = useState(true)
+    const [isFetching,setIsFetching] = useState(false)
     const urlData = useSelector(state=>state.dashboard.secureLinks)
     const user = useSelector(state=>state.login.oauthDetails)
     const [generateQrCode,setGenerateQrCode] = useState(false)
