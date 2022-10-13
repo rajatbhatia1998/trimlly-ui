@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from 'react'
 import { useParams } from "react-router-dom";
-import { Button, Result } from 'antd';
+import { message,Button, Result,Input } from 'antd';
 import axios from 'axios'
 import URLS from '../extras/enviroment';
 import Spinner from './common/Spinner';
@@ -13,6 +13,8 @@ export default function ShortUrlRedirect() {
     let params = useParams();
     const [isValidSlug,setIsValidSlug] = useState(true)
     const [isLoading,setIsLoading] = useState(false)
+    const [currentUrl,setCurrentUrl] = useState({urlType:'NORMAL'})
+    const [linkPassword,setLinkPassword] = useState("")
     useEffect(()=>{
       setIsLoading(true)
         axios.get(URLS.GUEST_URL.GET_SLUG_DETAILS+params.slug).then(res=>{
@@ -20,14 +22,23 @@ export default function ShortUrlRedirect() {
           setIsLoading(false)
           if(res.data.status){
             setIsValidSlug(true)
-           
+            setCurrentUrl(res.data.data)
+            let urlDetail = res.data.data
             let longUrl = res.data.data.longUrl
             var pattern = /^((http|https):\/\/)/;
 
           if(!pattern.test(longUrl)) {
               longUrl = "http://" + longUrl;
           }
-           window.location  = longUrl
+          if(urlDetail.urlType==='NORMAL'){
+              
+              window.location  = longUrl
+          }else if(urlDetail.urlType==='SECURE'){
+
+          }else{
+            //bio link
+          }
+         
           }else{
             setIsValidSlug(false)
           }
@@ -38,8 +49,20 @@ export default function ShortUrlRedirect() {
         })
         
     },[])
+    const passwordValidation = ()=>{
+      var pattern = /^((http|https):\/\/)/;
+      let longUrl = currentUrl.longUrl
+      if(!pattern.test(longUrl)) {
+          longUrl = "http://" + longUrl;
+      }
+      if(linkPassword===currentUrl.extensionData.secureLink.password){
+        window.location = longUrl
+      }else{
+        message.error('Wrong Password');
+      }
+    }
   return (
-    <div style={{}}>
+    <div >
      
       {isLoading ?
        <Result
@@ -60,7 +83,7 @@ export default function ShortUrlRedirect() {
       />
     
       }
-      {(isValidSlug && !isLoading) 
+      {(isValidSlug && !isLoading && currentUrl.urlType==='NORMAL') 
         &&
         <Result
         status="success"
@@ -70,6 +93,22 @@ export default function ShortUrlRedirect() {
       />
  
   }
+      {(isValidSlug && !isLoading && currentUrl.urlType==='SECURE') 
+            &&
+            <Result
+            status="403"
+            title="403"
+            subTitle="This links seems to be secured , Please enter passsword !"
+            extra={
+            <div className='container px-10'>
+              <Input type='password' value={linkPassword} onChange={e=>setLinkPassword(e.target.value)}/>
+              <Button type="primary" className='mt-5'c onClick={passwordValidation}>Request</Button>
+              
+              </div>
+              }
+          />
+    
+      }
 
 
     </div>

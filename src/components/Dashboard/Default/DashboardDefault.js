@@ -8,7 +8,7 @@ import {AppstoreOutlined,
     BarChartOutlined,
     DeleteFilled
     } from '@ant-design/icons';
-import { Result,Button, Empty,notification,Spin,Typography,Modal} from 'antd';
+import { Breadcrumb,Result,Button, Empty,notification,Spin,Typography,Modal,Popconfirm,message} from 'antd';
   import {
   BrowserRouter as Router,
   Routes,
@@ -123,6 +123,15 @@ export default function DashboardDefault() {
             <Spin tip='Loading...'/> : 
             </div>:
             <>
+            <div className='py-5 px-5 flex flex-col'>
+              <Breadcrumb>
+                    <Breadcrumb.Item onClick={()=>navigate('/dashboard/default')}> <a>DASHBOARD</a></Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                      HOME
+                    </Breadcrumb.Item>
+                </Breadcrumb>
+
+              </div>
               <div className='flex flex-row justify-end mr-2 mt-3'>
              
               <button className=' px-3 mr-2 py-1' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around'}}> 
@@ -227,9 +236,17 @@ export default function DashboardDefault() {
                               <BarChartOutlined style={{fontSize:20}} />
                             </span>
                             
-                            <span className='ml-2 cursor-pointer' onClick={()=>{handleDeleteSlug(url.slug)}}>
+                            <Popconfirm
+                              title="Are you sure to delete this url?"
+                              onConfirm={()=>handleDeleteSlug(url.slug)}
+                              onCancel={()=>message.error('Delete Canceled !')}
+                              okText="Yes"
+                              cancelText="No"
+                            >
+                              <span className='ml-2 cursor-pointer' >
                               <DeleteFilled style={{fontSize:20}} />
                             </span>
+                            </Popconfirm>
                           </td>
                       </tr>
                         })}

@@ -2,12 +2,13 @@ import React,{useEffect,useState} from 'react'
 import {useSelector,useDispatch} from 'react-redux'
 import axios from 'axios';
 import URLS from '../../../extras/enviroment'
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 import Intl from 'intl'
 import 'intl/locale-data/jsonp/en-IN'
 export default function UpgradePlans() {
     const user = useSelector(state=>state.login.oauthDetails)
     const configs = useSelector(state=>state.configs)
+    const membership = configs.membership
     const [plans,setPlans] = useState({
         personal:{
             
@@ -43,6 +44,11 @@ var openNotificationWithIcon = (type,msg,desc) => {
       });
     };
     const  onPayClick = async(amount,planType)=>{
+        let proceed = false
+        if(membership.planType=='FREE' || (membership.planType=='PERSONAL' && planType=='PRO') ){
+                proceed = true
+        }
+        if(proceed){
         let order = await axios.post(URLS.CUSTOMER.CREATE_ORDER_TO_UPGRADE,{amount:amount*100})
         console.log(order)
         var options = {
@@ -72,11 +78,11 @@ var openNotificationWithIcon = (type,msg,desc) => {
     });
         rzp1.open();
        
-
+        }else{
+            message.error('Cannot buy the memebership!')
+        }
      }
-     const getPrices = ()=>{
-
-     }
+   
   return (
     <div className='container mx-auto'>
       
@@ -89,6 +95,7 @@ var openNotificationWithIcon = (type,msg,desc) => {
       <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
           {/* <!-- Pricing Card --> */}
           <div class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+          {membership.planType==='FREE' && <span>CURRENT PLAN</span>}
               <h3 class="mb-4 text-2xl font-semibold">Starter</h3>
               <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Best for testing &  creating few url's and partial analytics for your links clicks</p>
               <div class="flex justify-center items-baseline my-8">
@@ -120,10 +127,10 @@ var openNotificationWithIcon = (type,msg,desc) => {
                       <span>Support:<span class="font-semibold">24 Months</span></span>
                   </li>
               </ul>
-              <a href="#" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Current Plan</a>
-          </div>
+              </div>
           {/* <!-- Pricing Card --> */}
           <div class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+         
               <h3 class="mb-4 text-2xl font-semibold">Personal</h3>
               <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Relevant for personal use, extended & premium support & features.</p>
               <div class="flex justify-center items-baseline my-8">
@@ -155,7 +162,7 @@ var openNotificationWithIcon = (type,msg,desc) => {
                       <span>Support:<span class="font-semibold">24 Months</span></span>
                   </li>
               </ul>
-              <a onClick={()=>onPayClick(plans.personal.amount,'PERSONAL')} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
+              <a onClick={()=>onPayClick(plans.personal.amount,'PERSONAL')} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">{membership.planType==='PERSONAL' ? 'CURRENT PLAN':'BUY'}</a>
           </div>
           {/* <!-- Pricing Card --> */}
           <div class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
@@ -190,7 +197,7 @@ var openNotificationWithIcon = (type,msg,desc) => {
                       <span>Support:<span class="font-semibold">24 Months</span></span>
                   </li>
               </ul>
-              <a onClick={()=>onPayClick(plans.pro.amount,'PRO')} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">Buy</a>
+              <a  onClick={()=>onPayClick(plans.pro.amount,'PRO')} class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-700 dark:text-white  dark:focus:ring-primary-900">{membership.planType==='PRO' ? 'CURRENT PLAN':'BUY'}</a>
           </div>
       </div>
   </div>
