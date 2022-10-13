@@ -87,9 +87,13 @@ export default function Navbar() {
               {configs.membership.planType!=='FREE' &&  <CrownTwoTone style={{marginLeft:5}} twoToneColor='#FFD700'/>}
                {configs.membership.planType==='FREE' &&    <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">FREE</span> }
          
-               {configs.membership.planType==='PERSONAL' &&    <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">PERSONAL</span> }  </a>
+               {configs.membership.planType==='PERSONAL' &&    <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">PERSONAL</span> } 
                
                {configs.membership.planType==='PRO' &&    <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">PRO</span> }
+               
+                </a>
+               
+             
          </li>
          <li onClick={()=>{navigateTo('/dashboard/bioLinks')}}>
             <button type="button" class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
