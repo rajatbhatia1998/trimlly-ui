@@ -174,10 +174,10 @@ export default function BioLinkDefault() {
                                 Date
                             </th>
                             <th scope="col" class="py-3 px-6">
-                              Short Link (Secured)
+                              Short Link (BIO)
                             </th>
                             <th scope="col" class="py-3 px-6">
-                                Original Link
+                                Theme Applied
                             </th>
                             <th scope="col" class="py-3 px-6">
                                 Clicks
@@ -206,7 +206,7 @@ export default function BioLinkDefault() {
                       </Link>
                           </td>
                           <td class="py-4 px-6">
-                              {url.longUrl}
+                              {url.extensionData.bioLinks.template?url.extensionData.bioLinks.template.themeName:'NA'}
                           </td>
                           <td class="py-4 px-6">
                               {url.clicks}

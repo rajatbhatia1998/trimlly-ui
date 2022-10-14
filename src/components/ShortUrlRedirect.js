@@ -1,9 +1,10 @@
 import React,{useEffect,useState} from 'react'
 import { useParams } from "react-router-dom";
-import { message,Button, Result,Input } from 'antd';
+import { message,Button, Result,Input,Avatar } from 'antd';
 import axios from 'axios'
 import URLS from '../extras/enviroment';
 import Spinner from './common/Spinner';
+import { getRedirectUrl } from '../extras/commanScript';
 
 
 
@@ -62,7 +63,7 @@ export default function ShortUrlRedirect() {
       }
     }
   return (
-    <div >
+    <div className={currentUrl.urlType==='BIO'?'w-screen flex justify-center item-center p-10':''} style={currentUrl.urlType==='BIO' ? {backgroundColor:currentUrl.extensionData.bioLinks.template.bgColor}:{}}>
      
       {isLoading ?
        <Result
@@ -109,7 +110,30 @@ export default function ShortUrlRedirect() {
           />
     
       }
-
+{(isValidSlug && !isLoading && currentUrl.urlType==='BIO') 
+            &&
+            <div className='flex flex-col justify-around items-center p-1'>
+                <a href="https://trimlly.com/" class="flex items-center">
+         <img src='./trimllyLogo.png'  class="mr-3 h-20 sm:h-20" alt="Trimlly Logo"/>
+     </a>
+              <span className='font-bold text-xl mb-10 '>BIO LINKS</span>
+                    
+            
+                {(currentUrl.extensionData.bioLinks.links.length>0) &&
+                    <div className='flex flex-col'>
+                        {currentUrl.extensionData.bioLinks.links.map((link)=>{
+                            return <a href={getRedirectUrl(link.url)} target='_blank' className={' text-center '+currentUrl.extensionData.bioLinks.template.buttonStyles}>{link.linkType}</a>
+                        })}
+                    </div>
+                   
+            
+                }
+                    
+            
+                  <span className='mt-10 font-serif '>Powered by <a href='https://www.trimlly.com'>Trimlly</a></span>
+                </div>
+    
+      }
 
     </div>
   )
