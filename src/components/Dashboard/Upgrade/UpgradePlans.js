@@ -107,7 +107,7 @@ var openNotificationWithIcon = (type,msg,desc) => {
      }
      const createOrder = async()=>{
         let order = await axios.post(URLS.CUSTOMER.CREATE_ORDER_TO_UPGRADE,{amount:orderPrice * 100})
-        console.log(order,orderPrice)
+        console.log(order,orderPrice,user)
         var options = {
             "key": order.data.razorPay.key_id, // Enter the Key ID generated from the Dashboard
             "amount": orderPrice * 100 , // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
