@@ -63,7 +63,7 @@ export default function ShortUrlRedirect() {
       }
     }
   return (
-    <div className={currentUrl.urlType==='BIO'?'w-screen flex justify-center item-center p-10':''} style={currentUrl.urlType==='BIO' ? {backgroundColor:currentUrl.extensionData.bioLinks.template.bgColor}:{}}>
+    <div className={currentUrl.urlType==='BIO'?'w-screen h-screen flex flex-col justify-center item-center p-10':''} style={currentUrl.urlType==='BIO' ? {backgroundColor:currentUrl.extensionData.bioLinks.template.bgColor}:{}}>
      
       {isLoading ?
        <Result
@@ -110,13 +110,13 @@ export default function ShortUrlRedirect() {
           />
     
       }
-{(isValidSlug && !isLoading && currentUrl.urlType==='BIO') 
+  {(isValidSlug && !isLoading && currentUrl.urlType==='BIO') 
             &&
             <div className='flex flex-col justify-around items-center p-1'>
-                <a href="https://trimlly.com/" class="flex items-center">
+                {/* <a href="https://trimlly.com/" class="flex items-center">
          <img src='./trimllyLogo.png'  class="mr-3 h-20 sm:h-20" alt="Trimlly Logo"/>
-     </a>
-              <span className='font-bold text-xl mb-10 '>BIO LINKS</span>
+     </a> */}
+              <span className='font-bold text-xl mb-10'>BIO LINKS</span>
                     
             
                 {(currentUrl.extensionData.bioLinks.links.length>0) &&
@@ -127,9 +127,7 @@ export default function ShortUrlRedirect() {
                     </div>
                    
             
-                }
-                    
-            
+                }    
                   <span className='mt-10 font-serif '>Powered by <a href='https://www.trimlly.com'>Trimlly</a></span>
                 </div>
     
