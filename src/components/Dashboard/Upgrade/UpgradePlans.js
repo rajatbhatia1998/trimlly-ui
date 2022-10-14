@@ -75,7 +75,6 @@ var openNotificationWithIcon = (type,msg,desc) => {
             "prefill": {
                 "name": user.displayName ? user.displayName : user.email,
                 "email": user.email,
-                "contact":"9023788306"
             }
         };
         var rzp1 = new window.Razorpay(options);
