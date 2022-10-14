@@ -84,7 +84,7 @@
 
 
  .google-btn {
-	 width: 184px;
+	 width: 100px;
 	 height: 42px;
 	 background-color: #4285f4;
 	 border-radius: 2px;
@@ -109,7 +109,7 @@
 }
  .google-btn .btn-text {
 	 float: right;
-	 margin: 11px 11px 0 0;
+	 margin: 11px 6px 0 0;
 	 color: #fff;
 	 font-size: 14px;
 	 letter-spacing: 0.2px;
