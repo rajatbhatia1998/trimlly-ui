@@ -2,9 +2,30 @@ import React,{useEffect,useState} from 'react'
 import {useSelector,useDispatch} from 'react-redux'
 import axios from 'axios';
 import URLS from '../../../extras/enviroment'
-import { message, notification } from 'antd';
+import { message, notification,Modal ,Button} from 'antd';
 import Intl from 'intl'
 import 'intl/locale-data/jsonp/en-IN'
+
+const couponsArray = [
+    {
+        couponName:'FREE WINTER',
+        couponCode:'WINTERISCOMING',
+        discoutPersent:90
+    },
+    {
+        couponName:'50% OFF',
+        couponCode:'GET50',
+        discoutPersent:50
+    },
+    {
+        couponName:'FREE 4 STUDENT',
+        couponCode:'STUDENT',
+        discoutPersent:99.9
+    }
+]
+
+
+
 export default function UpgradePlans() {
     const user = useSelector(state=>state.login.oauthDetails)
     const configs = useSelector(state=>state.configs)
@@ -19,6 +40,11 @@ export default function UpgradePlans() {
             
         }
     })
+    const [selectedPlan,setSelectedPlan] = useState({})
+    const [showCheckoutModal,setCheckoutModal] = useState(false)
+    const [orderPrice,setOrderPrice] = useState(0)
+    const [coupon,setCoupon] = useState("")
+    const [discountAvailed,setDiscountAvailed] = useState({})
    const formatAmount = (amount)=>{
         return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount)
     }
@@ -55,23 +81,42 @@ var openNotificationWithIcon = (type,msg,desc) => {
                 proceed = true
         }
         if(proceed){
-        let order = await axios.post(URLS.CUSTOMER.CREATE_ORDER_TO_UPGRADE,{amount:amount*100})
-        console.log(order)
+            setCheckoutModal(true)
+            setSelectedPlan({amount,planType})
+            setOrderPrice(amount)
+        }else{
+            message.error('Cannot buy the memebership!')
+        }
+     }
+     const onCouponApply = ()=>{
+        console.log(coupon)
+        let cp = couponsArray.filter(cou=>cou.couponCode===coupon)
+        if(cp.length>0){
+            const currentCoupon = cp[0]
+            console.log(currentCoupon)
+            let totalDiscount = (selectedPlan.amount / 100) * currentCoupon.discoutPersent
+            console.log(totalDiscount)
+            setDiscountAvailed({
+                couponDetail:currentCoupon,
+                totalDiscount:totalDiscount
+            })
+            setOrderPrice(orderPrice-totalDiscount)
+        }else{
+            message.error('INVALID COUPON USED !')
+        }
+     }
+     const createOrder = async()=>{
+        let order = await axios.post(URLS.CUSTOMER.CREATE_ORDER_TO_UPGRADE,{amount:orderPrice * 100})
+        console.log(order,orderPrice)
         var options = {
-            "key": "rzp_test_RIrUEwLm14CUHl", // Enter the Key ID generated from the Dashboard
-            "amount": amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "key": order.data.razorPay.key_id, // Enter the Key ID generated from the Dashboard
+            "amount": orderPrice * 100 , // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             "currency": "INR",
             "name": "Trimlly",
             "description": "Trimlly Plan upgrade",
             "image": 'https://www.trimlly.com/trimllyLogo.png',
-            "order_id": order.id,
-            // "handler": function (response){
-            //     console.log('paymemnt handlor',response)
-            //     alert(response.razorpay_payment_id);
-            //     alert(response.razorpay_order_id);
-            //     alert(response.razorpay_signature)
-            // },
-            "callback_url": `${URLS.CUSTOMER.PAYMENT_VERIFY}${planType}/${user.email}`,
+            "order_id": order.data.order.id,
+            "callback_url": `${URLS.CUSTOMER.PAYMENT_VERIFY}${selectedPlan.planType}/${user.email}`,
             "prefill": {
                 "name": user.displayName ? user.displayName : user.email,
                 "email": user.email,
@@ -82,15 +127,64 @@ var openNotificationWithIcon = (type,msg,desc) => {
             openNotificationWithIcon('error','Payment Failed',response.error.description)
     });
         rzp1.open();
-       
-        }else{
-            message.error('Cannot buy the memebership!')
-        }
      }
    
+     const canleOrder = ()=>{
+        setCheckoutModal(false)
+       setDiscountAvailed({})
+        setSelectedPlan({})
+        setOrderPrice(0)
+        setCoupon("")
+     }
   return (
     <div className='container mx-auto pb-10'>
+    
+       <Modal title="Order Summary" open={showCheckoutModal} onCancel={()=>canleOrder()}
+       
+       footer={[
+        <Button key="back" onClick={()=>setCheckoutModal(false)}>
+            CANCEL
+        </Button>,
+        
+        <Button
+          key="link"
       
+          type="primary"
+        
+          onClick={()=>createOrder()}
+        >
+         PAY NOW
+        </Button>,
+      ]}
+       >
+       <div class="flex justify-center  md:flex-row flex-col items-stretch w-full space-y-4 md:space-y-0 md:space-x-6 xl:space-x-8">
+        <div class="flex flex-col px-4 py-6 md:p-6 xl:p-8 w-full bg-gray-50 dark:bg-gray-800 space-y-6">
+          <h3 class="text-xl dark:text-white font-semibold leading-5 text-gray-800">Summary</h3>
+          <div class="flex justify-center items-center w-full space-y-4 flex-col border-gray-200 border-b pb-4">
+            <div class="flex justify-between w-full">
+              <p class="text-base dark:text-white leading-4 text-gray-800">Subtotal</p>
+              <p class="text-base dark:text-gray-300 leading-4 text-gray-600">{formatAmount(selectedPlan.amount)}</p>
+            </div>
+            {discountAvailed.totalDiscount && <div class="flex justify-between items-center w-full">
+              <p class="text-base dark:text-white leading-4 text-gray-800">Discount ({discountAvailed.couponDetail.couponName})</p>
+              <p class="text-base dark:text-gray-300 leading-4 text-gray-600">- {formatAmount(discountAvailed.totalDiscount)} </p>
+            </div>}
+            
+          </div>
+          <div class="flex justify-between items-center w-full">
+            <p class="text-base dark:text-white font-semibold leading-4 text-gray-800">Total</p>
+            <p class="text-base dark:text-gray-300 font-semibold leading-4 text-gray-600">{formatAmount(orderPrice)}</p>
+          </div>
+          <div class="flex justify-between items-center w-full">
+           <input value={coupon} onChange={(e)=>setCoupon(e.target.value)} className=' rounded-md w-auto px-5 p-1 border-2 border-black border-opacity-25'  placeholder='Enter Coupon' />
+           <button disabled={discountAvailed.totalDiscount>0} onClick={()=>onCouponApply()} className='bg-blue-700 text-white p-1 px-5 rounded-sm'>Apply</button>
+          </div>
+        </div>
+        
+
+      </div>
+
+     </Modal>
       <section class="bg-white dark:bg-gray-900">
   <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
       <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
