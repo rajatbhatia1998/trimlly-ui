@@ -1,4 +1,4 @@
-const server_url = "https://trimlly-server.herokuapp.com"
+const server_url = "https://trimlly-server.vercel.app"
 //const server_url = 'http://localhost:3001'
 
 const URLS = {
